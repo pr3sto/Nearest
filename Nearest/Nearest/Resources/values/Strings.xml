@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources> 
+  <!-- fragments names -->
+  <string name="favorite_fragment_name">Избранное</string>
+  <string name="settings_fragment_name">Настройки</string>
+  <!-- app bar -->
+  <string name="app_name">Nearest</string>
+  <string name="add_to_fav">Добавить в избранное</string>
+  <string name="open_drawer">Открыть меню</string>
+  <string name="close_drawer">Закрыть меню</string>
+  <!-- app bar fav popup -->
+  <string name="add_fav_query">Добавить запрос в избранное</string>
+  <string name="add_fav_place">Добавить место в избранное</string>
+  <!-- nav menu -->
+  <string name="map">Карта</string>
+  <string name="fav_queries">Избранные запросы</string>
+  <string name="fav_places">Избранные места</string>
+  <string name="settings">Настройки</string>
+  <string name="exit">Выход</string>
+  <!-- add to fav alert -->
+  <string name="add_to_fav_alert_name">Название</string>
+  <string name="add_to_fav_alert_edit_text_placeholder">Введите название</string>
+  <string name="add_to_fav_alert_dismiss">Отмена</string>
+  <string name="add_to_fav_alert_save">Сохранить</string>
+  <!-- exit -->
+  <string name="double_click_to_exit">Нажмите еще раз для выхода</string>
+</resources>

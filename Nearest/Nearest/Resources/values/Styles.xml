@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+  <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <item name="buttonBarNegativeButtonStyle">@style/AlertButtonStyle</item>
+    <item name="buttonBarPositiveButtonStyle">@style/AlertButtonStyle</item>
+  </style>
+
+  <style name="AlertButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+    <item name="android:textColor">#f44336</item>
+  </style>
+  
+  <style name="MyTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+    <item name="windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+    <item name="colorPrimary">#f44336</item>
+    <item name="colorPrimaryDark">#c62828</item>
+    <item name="colorAccent">#f44336</item>
+    <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+  </style>
+</resources>
