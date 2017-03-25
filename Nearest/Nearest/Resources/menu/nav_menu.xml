@@ -3,7 +3,7 @@
   <group android:id="@+id/grp1" android:checkableBehavior="single">
     <item
       android:id="@+id/nav_map"
-      android:icon="@drawable/ic_action_location_on"
+      android:icon="@drawable/ic_action_map"
       android:title="@string/map" />
   </group>
   <group android:id="@+id/grp2" android:checkableBehavior="single">

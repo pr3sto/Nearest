@@ -21,7 +21,7 @@
   <string name="add_to_fav_alert_name">Название</string>
   <string name="add_to_fav_alert_edit_text_placeholder">Введите название</string>
   <string name="add_to_fav_alert_dismiss">Отмена</string>
-  <string name="add_to_fav_alert_save">Сохранить</string>
+  <string name="add_to_fav_alert_ok">Ок</string>
   <!-- exit -->
   <string name="double_click_to_exit">Нажмите еще раз для выхода</string>
 </resources>

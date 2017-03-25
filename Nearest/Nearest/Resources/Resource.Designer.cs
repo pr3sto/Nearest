@@ -1747,16 +1747,22 @@ namespace Nearest
 			public const int ic_action_location_on = 2130837576;
 			
 			// aapt resource value: 0x7f020049
-			public const int ic_action_settings = 2130837577;
+			public const int ic_action_map = 2130837577;
 			
 			// aapt resource value: 0x7f02004a
-			public const int ic_action_star = 2130837578;
+			public const int ic_action_settings = 2130837578;
 			
 			// aapt resource value: 0x7f02004b
-			public const int ic_action_star_border = 2130837579;
+			public const int ic_action_star = 2130837579;
 			
 			// aapt resource value: 0x7f02004c
-			public const int notification_template_icon_bg = 2130837580;
+			public const int ic_action_star_border = 2130837580;
+			
+			// aapt resource value: 0x7f02004d
+			public const int ic_map = 2130837581;
+			
+			// aapt resource value: 0x7f02004e
+			public const int notification_template_icon_bg = 2130837582;
 			
 			static Drawable()
 			{
@@ -2533,7 +2539,7 @@ namespace Nearest
 			public const int add_to_fav_alert_name = 2131230755;
 			
 			// aapt resource value: 0x7f080026
-			public const int add_to_fav_alert_save = 2131230758;
+			public const int add_to_fav_alert_ok = 2131230758;
 			
 			// aapt resource value: 0x7f080018
 			public const int app_name = 2131230744;

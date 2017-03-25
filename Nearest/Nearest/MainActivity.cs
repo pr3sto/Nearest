@@ -31,7 +31,7 @@ namespace Nearest
             // attach item selected handler to navigation view
             var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetCheckedItem(Resource.Id.nav_map);
-            navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
+            navigationView.NavigationItemSelected += ChangeMainFragment;
 
             // create ActionBarDrawerToggle button and add it to the toolbar
             var drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, Resource.String.open_drawer, Resource.String.close_drawer);
@@ -41,20 +41,20 @@ namespace Nearest
             // load default home screen
             if (savedInstanceState == null)
             {
-                var ft = FragmentManager.BeginTransaction();
-                ft.AddToBackStack(null);
-                ft.Add(Resource.Id.main_fragment, new HomeFragment(ContentType.Map));
-                ft.Commit();
+                using (var ft = FragmentManager.BeginTransaction())
+                {
+                    ft.AddToBackStack(null);
+                    ft.Add(Resource.Id.main_fragment, new MapFragment());
+                    ft.Commit();
+                }
             }
-            
-            UpdateInterface();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             actionBarMenu = menu;
             MenuInflater.Inflate(Resource.Menu.action_menu, menu);
-            UpdateInterface();
+            UpdateActionBar();
 
             return base.OnCreateOptionsMenu(menu);
         }
@@ -66,10 +66,9 @@ namespace Nearest
                 case Android.Resource.Id.Home:
                     return true;
                 case Resource.Id.action_add_to_fav:
-                    // open 'add to fav' popup
                     var popup = new PopupMenu(this, FindViewById(Resource.Id.action_add_to_fav));
                     popup.MenuInflater.Inflate(Resource.Menu.add_to_fav_popup_menu, popup.Menu);
-                    popup.MenuItemClick += PopupMenu_MenuItemClick;
+                    popup.MenuItemClick += ShowAlert;
                     popup.Show();
                     return true;
                 default:
@@ -77,61 +76,27 @@ namespace Nearest
             }
         }
         
-        private void NavigationView_NavigationItemSelected(object sender, NavigationView.NavigationItemSelectedEventArgs e)
-        {
-            switch (e.MenuItem.ItemId)
-            {
-                case (Resource.Id.nav_map):
-                    ShowMapFragment();
-                    break;
-                case (Resource.Id.nav_fav_queries):
-                    ShowHomeFragment(ContentType.ListOfFavoritQueries);
-                    break;
-                case (Resource.Id.nav_fav_places):
-                    ShowHomeFragment(ContentType.ListOfFavoritPlaces);
-                    break;
-                case (Resource.Id.nav_settings):
-                    ShowHomeFragment(ContentType.Settings);
-                    break;
-                case (Resource.Id.nav_exit):
-                    FinishAffinity();
-                    break;
-            }
-            drawerLayout.CloseDrawers();
-        }
-        
-        private void PopupMenu_MenuItemClick(object sender, PopupMenu.MenuItemClickEventArgs e)
-        {
-            switch (e.Item.ItemId)
-            {
-                case (Resource.Id.action_add_fav_query):
-                    ShowAddToFavDialog();
-                    break;
-                case (Resource.Id.action_add_fav_place):
-                    ShowAddToFavDialog();
-                    break;
-            }
-        }
-        
         public override void OnBackPressed()
         {
             if (drawerLayout.IsDrawerOpen(Android.Support.V4.View.GravityCompat.Start))
             {
+                // hide nav menu
                 drawerLayout.CloseDrawers();
             }
             else if (FragmentManager.BackStackEntryCount > 1)
             {
+                // close current fragment
                 FragmentManager.PopBackStack();
-                UpdateInterface();
+                UpdateActionBar();
             }
             else
             {
+                // close app on double click
                 if (doubleBackToExitPressedOnce)
                 {
                     base.OnBackPressed();
                     return;
                 }
-
                 doubleBackToExitPressedOnce = true;
 
                 Android.Widget.Toast.MakeText(this, GetString(Resource.String.double_click_to_exit), 
@@ -141,22 +106,78 @@ namespace Nearest
             }
         }
 
-        private void ShowAddToFavDialog()
+        private void ChangeMainFragment(object sender, NavigationView.NavigationItemSelectedEventArgs e)
+        {
+            // pop all fragments except first
+            int num_of_fragments = FragmentManager.BackStackEntryCount;
+            while (num_of_fragments > 1)
+            {
+                FragmentManager.PopBackStack();
+                num_of_fragments--;
+            }
+
+            // start transaction
+            using (var ft = FragmentManager.BeginTransaction())
+            {
+                ft.AddToBackStack(null);
+
+                // add needed fragment
+                switch (e.MenuItem.ItemId)
+                {
+                    case (Resource.Id.nav_map):
+                        break;
+                    case (Resource.Id.nav_fav_queries):
+                        ft.Add(Resource.Id.main_fragment, new FavoriteQueriesFragment(), "SECOND_FRAGMENT");
+                        ft.Commit();
+                        break;
+                    case (Resource.Id.nav_fav_places):
+                        ft.Add(Resource.Id.main_fragment, new FavoritePlacesFragment(), "SECOND_FRAGMENT");
+                        ft.Commit();
+                        break;
+                    case (Resource.Id.nav_settings):
+                        ft.Add(Resource.Id.main_fragment, new SettingsFragment(), "SECOND_FRAGMENT");
+                        ft.Commit();
+                        break;
+                    case (Resource.Id.nav_exit):
+                        FinishAffinity();
+                        break;
+                }
+            }            
+
+            UpdateActionBar();
+            drawerLayout.CloseDrawers();
+        }
+
+        private void ShowAlert(object sender, PopupMenu.MenuItemClickEventArgs e)
+        {
+            switch (e.Item.ItemId)
+            {
+                case (Resource.Id.action_add_fav_query):
+                    ShowAddToFavAlert(() => Android.Widget.Toast.MakeText(this, "save to fav queries", Android.Widget.ToastLength.Short).Show());
+                    break;
+                case (Resource.Id.action_add_fav_place):
+                    ShowAddToFavAlert(() => Android.Widget.Toast.MakeText(this, "save to fav places", Android.Widget.ToastLength.Short).Show());
+                    break;
+            }
+        }
+
+        private void ShowAddToFavAlert(System.Action saveAction)
         {
             LayoutInflater layoutInflater = LayoutInflater.From(this);
-            View promptView = layoutInflater.Inflate(Resource.Layout.add_to_fav_alert, null);
-            var alertDialogBuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
-            alertDialogBuilder.SetView(promptView);
+            View view = layoutInflater.Inflate(Resource.Layout.add_to_fav_alert, null);
 
-            // setup a dialog window
+            var alertDialogBuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
+            alertDialogBuilder.SetView(view);
+
+            // setup a alert window
             alertDialogBuilder.SetCancelable(false);
-            alertDialogBuilder.SetPositiveButton(Resource.String.add_to_fav_alert_save, (s, e) => 
+            alertDialogBuilder.SetPositiveButton(Resource.String.add_to_fav_alert_ok, (s, e) => 
             {
-                Android.Widget.Toast.MakeText(this, "save", Android.Widget.ToastLength.Short).Show();
+                saveAction.Invoke();
             });
             alertDialogBuilder.SetNegativeButton(Resource.String.add_to_fav_alert_dismiss, (s, e) => 
             {
-                Android.Widget.Toast.MakeText(this, "dismiss", Android.Widget.ToastLength.Short).Show();
+                ((Android.Support.V7.App.AlertDialog)s).Dismiss();
             });
                     
 		    // create an alert dialog
@@ -164,80 +185,43 @@ namespace Nearest
             alert.Show();
 	    }
 
-        private void ShowMapFragment()
-        {
-            int n = FragmentManager.BackStackEntryCount - 1;
-            while (n-- > 0)
-                FragmentManager.PopBackStack();
-
-            UpdateInterface();
-        }
-
-        private void ShowHomeFragment(ContentType type)
-        {
-            if (FragmentManager.BackStackEntryCount > 1)
-                FragmentManager.PopBackStack();
-
-            var ft1 = FragmentManager.BeginTransaction();
-            ft1.AddToBackStack(null);
-            ft1.Add(Resource.Id.main_fragment, new HomeFragment(type), "SECOND_FRAGMENT");
-            ft1.Commit();
-
-            UpdateInterface();
-        }
-
-        private void UpdateInterface()
+        private void UpdateActionBar()
         {
             FragmentManager.ExecutePendingTransactions();
+
+            int actionBarTitleId = Resource.String.app_name;
+            bool actionAddToFavEnabled = true;
+             
             if (FragmentManager.BackStackEntryCount == 1)
             {
-                SupportActionBar.SetTitle(Resource.String.app_name);
-                if (actionBarMenu != null)
-                {
-                    OnPrepareOptionsMenu(actionBarMenu);
-                    actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(true);
-                }
-
                 var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
                 navigationView.SetCheckedItem(Resource.Id.nav_map);
             }
             else if (FragmentManager.BackStackEntryCount > 1)
             {
-                switch (((HomeFragment)FragmentManager.FindFragmentByTag("SECOND_FRAGMENT")).ContentType)
+                Fragment currentFragment = FragmentManager.FindFragmentByTag("SECOND_FRAGMENT");
+                switch (currentFragment.GetType().Name)
                 {
-                    case ContentType.ListOfFavoritQueries:
-                        SupportActionBar.SetTitle(Resource.String.favorite_fragment_name);
-                        if (actionBarMenu != null)
-                        {
-                            OnPrepareOptionsMenu(actionBarMenu);
-                            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(false);
-                        }
+                    case nameof(FavoriteQueriesFragment):
+                        actionBarTitleId = Resource.String.favorite_fragment_name;
+                        actionAddToFavEnabled = false;
                         break;
-                    case ContentType.ListOfFavoritPlaces:
-                        SupportActionBar.SetTitle(Resource.String.favorite_fragment_name);
-                        if (actionBarMenu != null)
-                        {
-                            OnPrepareOptionsMenu(actionBarMenu);
-                            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(false);
-                        }
+                    case nameof(FavoritePlacesFragment):
+                        actionBarTitleId = Resource.String.favorite_fragment_name;
+                        actionAddToFavEnabled = false;
                         break;
-                    case ContentType.Settings:
-                        SupportActionBar.SetTitle(Resource.String.settings_fragment_name);
-                        if (actionBarMenu != null)
-                        {
-                            OnPrepareOptionsMenu(actionBarMenu);
-                            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(false);
-                        }
-                        break;
-                    default:
-                        SupportActionBar.SetTitle(Resource.String.app_name);
-                        if (actionBarMenu != null)
-                        {
-                            OnPrepareOptionsMenu(actionBarMenu);
-                            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(true);
-                        }
+                    case nameof(SettingsFragment):
+                        actionBarTitleId = Resource.String.settings_fragment_name;
+                        actionAddToFavEnabled = false;
                         break;
                 }
+            }
+
+            SupportActionBar.SetTitle(actionBarTitleId);
+            if (actionBarMenu != null)
+            {
+                OnPrepareOptionsMenu(actionBarMenu);
+                actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(actionAddToFavEnabled);
             }
         }
     }
