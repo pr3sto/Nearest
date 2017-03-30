@@ -1,7 +1,25 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:myapp="http://schemas.android.com/apk/res-auto"> 
-	<item 
+      xmlns:myapp="http://schemas.android.com/apk/res-auto">
+  <item 
+    android:id="@+id/action_search"
+    android:title="@string/search"
+    android:icon="@drawable/ic_action_search"
+    android:imeOptions="actionSearch"
+    android:inputType="textAutoComplete|textAutoCorrect"
+    myapp:actionLayout="@layout/search_text_view"
+    myapp:showAsAction="always|collapseActionView"/>
+  <item
+    android:id="@+id/action_clear"
+		android:icon="@drawable/ic_action_close"
+		android:title="@string/clear"
+		myapp:showAsAction="always" />
+  <item
+    android:id="@+id/action_voice"
+		android:icon="@drawable/ic_action_keyboard_voice"
+		android:title="@string/search_voice"
+		myapp:showAsAction="always" />
+  <item 
     android:id="@+id/action_add_to_fav"
 		android:icon="@drawable/ic_action_star"
 		android:title="@string/add_to_fav"

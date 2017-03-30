@@ -1,10 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<resources> 
+<resources>
   <!-- fragments names -->
   <string name="favorite_fragment_name">Избранное</string>
   <string name="settings_fragment_name">Настройки</string>
   <!-- app bar -->
   <string name="app_name">Nearest</string>
+  <string name="search">Поиск</string>
+  <string name="clear">Очистить</string>
+  <string name="search_voice">Голосовой поиск</string>
   <string name="add_to_fav">Добавить в избранное</string>
   <string name="open_drawer">Открыть меню</string>
   <string name="close_drawer">Закрыть меню</string>
@@ -24,4 +27,6 @@
   <string name="add_to_fav_alert_ok">Ок</string>
   <!-- exit -->
   <string name="double_click_to_exit">Нажмите еще раз для выхода</string>
+  <!-- map fragment -->
+  <string name="search_text_view_hint">Введите запрос</string>
 </resources>

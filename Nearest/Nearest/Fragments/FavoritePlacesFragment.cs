@@ -2,9 +2,9 @@ using Android.App;
 using Android.OS;
 using Android.Views;
 
-namespace Nearest
+namespace Nearest.Fragments
 {
-    public class SettingsFragment : Fragment
+    public class FavoritePlacesFragment : Fragment
     {
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -25,7 +25,7 @@ namespace Nearest
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.settings, container, false);
+            return inflater.Inflate(Resource.Layout.favorites, container, false);
         }
     }
 }

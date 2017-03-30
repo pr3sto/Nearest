@@ -1915,34 +1915,43 @@ namespace Nearest
 			public const int design_snackbar_background = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int ic_action_exit_to_app = 2130837601;
+			public const int ic_action_close = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int ic_action_location_on = 2130837602;
+			public const int ic_action_exit_to_app = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int ic_action_map = 2130837603;
+			public const int ic_action_keyboard_voice = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int ic_action_settings = 2130837604;
+			public const int ic_action_location_on = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int ic_action_star = 2130837605;
+			public const int ic_action_map = 2130837605;
 			
 			// aapt resource value: 0x7f020066
-			public const int ic_action_star_border = 2130837606;
+			public const int ic_action_search = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int ic_map = 2130837607;
-			
-			// aapt resource value: 0x7f02006a
-			public const int notification_template_icon_bg = 2130837610;
+			public const int ic_action_settings = 2130837607;
 			
 			// aapt resource value: 0x7f020068
-			public const int powered_by_google_dark = 2130837608;
+			public const int ic_action_star = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int powered_by_google_light = 2130837609;
+			public const int ic_action_star_border = 2130837609;
+			
+			// aapt resource value: 0x7f02006a
+			public const int ic_map = 2130837610;
+			
+			// aapt resource value: 0x7f02006d
+			public const int notification_template_icon_bg = 2130837613;
+			
+			// aapt resource value: 0x7f02006b
+			public const int powered_by_google_dark = 2130837611;
+			
+			// aapt resource value: 0x7f02006c
+			public const int powered_by_google_light = 2130837612;
 			
 			static Drawable()
 			{
@@ -1960,14 +1969,14 @@ namespace Nearest
 			// aapt resource value: 0x7f0a007b
 			public const int action0 = 2131361915;
 			
-			// aapt resource value: 0x7f0a008a
-			public const int action_add_fav_place = 2131361930;
+			// aapt resource value: 0x7f0a008e
+			public const int action_add_fav_place = 2131361934;
 			
-			// aapt resource value: 0x7f0a0089
-			public const int action_add_fav_query = 2131361929;
+			// aapt resource value: 0x7f0a008d
+			public const int action_add_fav_query = 2131361933;
 			
-			// aapt resource value: 0x7f0a0088
-			public const int action_add_to_fav = 2131361928;
+			// aapt resource value: 0x7f0a008c
+			public const int action_add_to_fav = 2131361932;
 			
 			// aapt resource value: 0x7f0a005f
 			public const int action_bar = 2131361887;
@@ -1990,6 +1999,9 @@ namespace Nearest
 			// aapt resource value: 0x7f0a003f
 			public const int action_bar_title = 2131361855;
 			
+			// aapt resource value: 0x7f0a008a
+			public const int action_clear = 2131361930;
+			
 			// aapt resource value: 0x7f0a0060
 			public const int action_context_bar = 2131361888;
 			
@@ -2010,6 +2022,12 @@ namespace Nearest
 			
 			// aapt resource value: 0x7f0a0041
 			public const int action_mode_close_button = 2131361857;
+			
+			// aapt resource value: 0x7f0a0089
+			public const int action_search = 2131361929;
+			
+			// aapt resource value: 0x7f0a008b
+			public const int action_voice = 2131361931;
 			
 			// aapt resource value: 0x7f0a0042
 			public const int activity_chooser_view_content = 2131361858;
@@ -2137,17 +2155,17 @@ namespace Nearest
 			// aapt resource value: 0x7f0a003d
 			public const int @fixed = 2131361853;
 			
-			// aapt resource value: 0x7f0a008b
-			public const int grp1 = 2131361931;
+			// aapt resource value: 0x7f0a008f
+			public const int grp1 = 2131361935;
 			
-			// aapt resource value: 0x7f0a008d
-			public const int grp2 = 2131361933;
+			// aapt resource value: 0x7f0a0091
+			public const int grp2 = 2131361937;
 			
-			// aapt resource value: 0x7f0a0090
-			public const int grp3 = 2131361936;
+			// aapt resource value: 0x7f0a0094
+			public const int grp3 = 2131361940;
 			
-			// aapt resource value: 0x7f0a0092
-			public const int grp4 = 2131361938;
+			// aapt resource value: 0x7f0a0096
+			public const int grp4 = 2131361942;
 			
 			// aapt resource value: 0x7f0a0005
 			public const int home = 2131361797;
@@ -2206,20 +2224,20 @@ namespace Nearest
 			// aapt resource value: 0x7f0a001a
 			public const int multiply = 2131361818;
 			
+			// aapt resource value: 0x7f0a0097
+			public const int nav_exit = 2131361943;
+			
 			// aapt resource value: 0x7f0a0093
-			public const int nav_exit = 2131361939;
+			public const int nav_fav_places = 2131361939;
 			
-			// aapt resource value: 0x7f0a008f
-			public const int nav_fav_places = 2131361935;
+			// aapt resource value: 0x7f0a0092
+			public const int nav_fav_queries = 2131361938;
 			
-			// aapt resource value: 0x7f0a008e
-			public const int nav_fav_queries = 2131361934;
+			// aapt resource value: 0x7f0a0090
+			public const int nav_map = 2131361936;
 			
-			// aapt resource value: 0x7f0a008c
-			public const int nav_map = 2131361932;
-			
-			// aapt resource value: 0x7f0a0091
-			public const int nav_settings = 2131361937;
+			// aapt resource value: 0x7f0a0095
+			public const int nav_settings = 2131361941;
 			
 			// aapt resource value: 0x7f0a0079
 			public const int nav_view = 2131361913;
@@ -2304,6 +2322,9 @@ namespace Nearest
 			
 			// aapt resource value: 0x7f0a0068
 			public const int search_src_text = 2131361896;
+			
+			// aapt resource value: 0x7f0a0088
+			public const int search_text_view = 2131361928;
 			
 			// aapt resource value: 0x7f0a006c
 			public const int search_voice_btn = 2131361900;
@@ -2599,19 +2620,22 @@ namespace Nearest
 			public const int notification_template_part_time = 2130968625;
 			
 			// aapt resource value: 0x7f040032
-			public const int select_dialog_item_material = 2130968626;
+			public const int search_text_view = 2130968626;
 			
 			// aapt resource value: 0x7f040033
-			public const int select_dialog_multichoice_material = 2130968627;
+			public const int select_dialog_item_material = 2130968627;
 			
 			// aapt resource value: 0x7f040034
-			public const int select_dialog_singlechoice_material = 2130968628;
+			public const int select_dialog_multichoice_material = 2130968628;
 			
 			// aapt resource value: 0x7f040035
-			public const int settings = 2130968629;
+			public const int select_dialog_singlechoice_material = 2130968629;
 			
 			// aapt resource value: 0x7f040036
-			public const int support_simple_spinner_dropdown_item = 2130968630;
+			public const int settings = 2130968630;
+			
+			// aapt resource value: 0x7f040037
+			public const int support_simple_spinner_dropdown_item = 2130968631;
 			
 			static Layout()
 			{
@@ -2721,26 +2745,26 @@ namespace Nearest
 			// aapt resource value: 0x7f060034
 			public const int abc_toolbar_collapse_description = 2131099700;
 			
-			// aapt resource value: 0x7f060040
-			public const int add_fav_place = 2131099712;
+			// aapt resource value: 0x7f060043
+			public const int add_fav_place = 2131099715;
+			
+			// aapt resource value: 0x7f060042
+			public const int add_fav_query = 2131099714;
 			
 			// aapt resource value: 0x7f06003f
-			public const int add_fav_query = 2131099711;
+			public const int add_to_fav = 2131099711;
 			
-			// aapt resource value: 0x7f06003c
-			public const int add_to_fav = 2131099708;
+			// aapt resource value: 0x7f06004b
+			public const int add_to_fav_alert_dismiss = 2131099723;
 			
-			// aapt resource value: 0x7f060048
-			public const int add_to_fav_alert_dismiss = 2131099720;
-			
-			// aapt resource value: 0x7f060047
-			public const int add_to_fav_alert_edit_text_placeholder = 2131099719;
-			
-			// aapt resource value: 0x7f060046
-			public const int add_to_fav_alert_name = 2131099718;
+			// aapt resource value: 0x7f06004a
+			public const int add_to_fav_alert_edit_text_placeholder = 2131099722;
 			
 			// aapt resource value: 0x7f060049
-			public const int add_to_fav_alert_ok = 2131099721;
+			public const int add_to_fav_alert_name = 2131099721;
+			
+			// aapt resource value: 0x7f06004c
+			public const int add_to_fav_alert_ok = 2131099724;
 			
 			// aapt resource value: 0x7f06003b
 			public const int app_name = 2131099707;
@@ -2757,8 +2781,11 @@ namespace Nearest
 			// aapt resource value: 0x7f060037
 			public const int character_counter_pattern = 2131099703;
 			
-			// aapt resource value: 0x7f06003e
-			public const int close_drawer = 2131099710;
+			// aapt resource value: 0x7f06003d
+			public const int clear = 2131099709;
+			
+			// aapt resource value: 0x7f060041
+			public const int close_drawer = 2131099713;
 			
 			// aapt resource value: 0x7f060004
 			public const int common_android_wear_notification_needs_update_text = 2131099652;
@@ -2856,17 +2883,17 @@ namespace Nearest
 			// aapt resource value: 0x7f060021
 			public const int common_signin_button_text_long = 2131099681;
 			
-			// aapt resource value: 0x7f06004a
-			public const int double_click_to_exit = 2131099722;
+			// aapt resource value: 0x7f06004d
+			public const int double_click_to_exit = 2131099725;
+			
+			// aapt resource value: 0x7f060048
+			public const int exit = 2131099720;
+			
+			// aapt resource value: 0x7f060046
+			public const int fav_places = 2131099718;
 			
 			// aapt resource value: 0x7f060045
-			public const int exit = 2131099717;
-			
-			// aapt resource value: 0x7f060043
-			public const int fav_places = 2131099715;
-			
-			// aapt resource value: 0x7f060042
-			public const int fav_queries = 2131099714;
+			public const int fav_queries = 2131099717;
 			
 			// aapt resource value: 0x7f060039
 			public const int favorite_fragment_name = 2131099705;
@@ -2874,14 +2901,23 @@ namespace Nearest
 			// aapt resource value: 0x7f060038
 			public const int google_maps_api_key = 2131099704;
 			
-			// aapt resource value: 0x7f060041
-			public const int map = 2131099713;
-			
-			// aapt resource value: 0x7f06003d
-			public const int open_drawer = 2131099709;
-			
 			// aapt resource value: 0x7f060044
-			public const int settings = 2131099716;
+			public const int map = 2131099716;
+			
+			// aapt resource value: 0x7f060040
+			public const int open_drawer = 2131099712;
+			
+			// aapt resource value: 0x7f06003c
+			public const int search = 2131099708;
+			
+			// aapt resource value: 0x7f06004e
+			public const int search_text_view_hint = 2131099726;
+			
+			// aapt resource value: 0x7f06003e
+			public const int search_voice = 2131099710;
+			
+			// aapt resource value: 0x7f060047
+			public const int settings = 2131099719;
 			
 			// aapt resource value: 0x7f06003a
 			public const int settings_fragment_name = 2131099706;
@@ -2903,7 +2939,7 @@ namespace Nearest
 		{
 			
 			// aapt resource value: 0x7f0c0145
-			public const int AlertButtonStyle = 2131493189;
+			public const int AlertButtonTheme = 2131493189;
 			
 			// aapt resource value: 0x7f0c007d
 			public const int AlertDialog_AppCompat = 2131492989;
@@ -2919,6 +2955,9 @@ namespace Nearest
 			
 			// aapt resource value: 0x7f0c0080
 			public const int Animation_AppCompat_DropDownUp = 2131492992;
+			
+			// aapt resource value: 0x7f0c0146
+			public const int AutoCompleteTextViewTheme = 2131493190;
 			
 			// aapt resource value: 0x7f0c0081
 			public const int Base_AlertDialog_AppCompat = 2131492993;
@@ -3343,11 +3382,11 @@ namespace Nearest
 			// aapt resource value: 0x7f0c0134
 			public const int Base_Widget_Design_TabLayout = 2131493172;
 			
-			// aapt resource value: 0x7f0c0147
-			public const int MyTheme = 2131493191;
+			// aapt resource value: 0x7f0c0148
+			public const int MyTheme = 2131493192;
 			
-			// aapt resource value: 0x7f0c0146
-			public const int MyTheme_Base = 2131493190;
+			// aapt resource value: 0x7f0c0147
+			public const int MyTheme_Base = 2131493191;
 			
 			// aapt resource value: 0x7f0c0010
 			public const int Platform_AppCompat = 2131492880;

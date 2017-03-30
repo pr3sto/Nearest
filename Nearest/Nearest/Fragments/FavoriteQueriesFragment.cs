@@ -2,9 +2,9 @@ using Android.App;
 using Android.OS;
 using Android.Views;
 
-namespace Nearest
+namespace Nearest.Fragments
 {
-    public class FavoritePlacesFragment : Fragment
+    public class FavoriteQueriesFragment : Fragment
     {
         public override void OnCreate(Bundle savedInstanceState)
         {
