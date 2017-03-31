@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nearest.PlacesApi.Model
+namespace Nearest.GoogleApi.Model
 {
     public class QueryAutoCompleteResponse
     {

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="language">ru</string>
   <!-- fragments names -->
   <string name="favorite_fragment_name">Избранное</string>
   <string name="settings_fragment_name">Настройки</string>

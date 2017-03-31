@@ -2,27 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net;
-using Nearest.PlacesApi.Model;
 using Newtonsoft.Json;
+using Nearest.GoogleApi.Model;
 
-namespace Nearest.PlacesApi
+namespace Nearest.GoogleApi
 {
-    public static class PlacesApi
+    public static class PlacesService
     {
         private const string AUTOCOMPLETE_API = "https://maps.googleapis.com/maps/api/place/queryautocomplete/json";
         private const string NEARBYSEARCH_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 
-        public static async Task<List<Prediction>> GetSearchQueryPredictions(
-            string searchQueryText, string apiKey, Android.Locations.Location location, int radius)
+        public static string ApiKey { get; set; } = "";
+        public static string Language { get; set; } = "en";
+        public static int Radius { get; set; } = 5000;
+
+        public static async Task<List<Prediction>> GetSearchQueryPredictions(string searchQueryText, Location myLocation)
         {
             string request = AUTOCOMPLETE_API + "?input=" + searchQueryText;
-            if (location != null)
-            {
-                string latitude = location.Latitude.ToString("0.00000", System.Globalization.CultureInfo.InvariantCulture);
-                string longitude = location.Longitude.ToString("0.00000", System.Globalization.CultureInfo.InvariantCulture);
-                request += "&location=" + latitude + "," + longitude + "&radius=" + radius;
-            }
-            request += "&key=" + apiKey;
+
+            string latitude = myLocation.lat.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
+            string longitude = myLocation.lng.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
+
+            request += "&location=" + latitude + "," + longitude + "&radius=" + Radius;
+            request += "&language=" + Language + "&key=" + ApiKey;
 
             string response = "";
 
@@ -44,19 +46,18 @@ namespace Nearest.PlacesApi
             return responseJson.predictions;
         }
 
-        public static async Task<List<Place>> GetPlacesByQuery(
-            string searchQueryText, string apiKey, Android.Locations.Location location, int radius)
+        public static async Task<List<Place>> GetPlacesByQuery(string searchQueryText, Location myLocation)
         {
-            if (location == null)
+            if (myLocation == null)
                 throw new NearbyPlacesSearchException("location is null");
 
             string request = NEARBYSEARCH_API + "?keyword=" + searchQueryText;
 
-            string latitude = location.Latitude.ToString("0.00000", System.Globalization.CultureInfo.InvariantCulture);
-            string longitude = location.Longitude.ToString("0.00000", System.Globalization.CultureInfo.InvariantCulture);
-            request += "&location=" + latitude + "," + longitude + "&radius=" + radius;
+            string latitude = myLocation.lat.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
+            string longitude = myLocation.lng.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
 
-            request += "&key=" + apiKey;
+            request += "&location=" + latitude + "," + longitude + "&radius=" + Radius;
+            request += "&language=" + Language + "&key=" + ApiKey;  
 
             string response = "";
 

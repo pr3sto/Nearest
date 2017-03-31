@@ -10,10 +10,10 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.App;
 using Android.Runtime;
-using Nearest.Fragments;
 using AWidget = Android.Widget;
-using Nearest.PlacesApi.Model;
-using static Nearest.PlacesApi.PlacesApi;
+using Nearest.Fragments;
+using Nearest.GoogleApi;
+using Nearest.GoogleApi.Model;
 
 namespace Nearest.Activities
 {
@@ -58,28 +58,32 @@ namespace Nearest.Activities
         #endregion
 
         private DrawerLayout drawerLayout;
+        private NavigationView navigationView;
         private IMenu actionBarMenu;
         private AWidget.AutoCompleteTextView searchTextView;
+
+        private bool IsInSearchMode = false;
+        private bool IsActionAddToFavEnabled = false;
+
         private bool doubleBackToExitPressedOnce = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.main);
-            drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+
+            // setup google api
+            PlacesService.ApiKey = GetString(Resource.String.google_maps_api_key);
+            PlacesService.Language = GetString(Resource.String.language);
 
             // init toolbar
             var toolbar = FindViewById<Toolbar>(Resource.Id.app_bar);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-
-            // attach item selected handler to navigation view
-            var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
-            navigationView.SetCheckedItem(Resource.Id.nav_map);
-            navigationView.NavigationItemSelected += ChangeMainFragment;
-
+            
             // create ActionBarDrawerToggle button and add it to the toolbar
+            drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, Resource.String.open_drawer, Resource.String.close_drawer);
             drawerLayout.SetDrawerListener(drawerToggle);
             drawerToggle.SyncState();
@@ -93,6 +97,10 @@ namespace Nearest.Activities
                     actionBarMenu.FindItem(Resource.Id.action_search).CollapseActionView();
                 }
             };
+
+            // attach item selected handler to navigation view
+            navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            navigationView.NavigationItemSelected += ChangeMainFragment;
 
             // load default home screen
             if (savedInstanceState == null)
@@ -110,6 +118,16 @@ namespace Nearest.Activities
         {
             actionBarMenu = menu;
             MenuInflater.Inflate(Resource.Menu.action_menu, menu);
+
+            // init search text view
+            searchTextView = (AWidget.AutoCompleteTextView)menu.FindItem(Resource.Id.action_search).ActionView;
+            searchTextView.TextChanged += (s1, e1) => AutoComplete();
+            searchTextView.ItemClick += (s1, e1) => { FinishSearch(); GetNearestAddress(); };
+
+            var searchListener = new SearchActionListener();
+            searchListener.Search += (s1, e1) => { FinishSearch(); GetNearestAddress(); };
+            searchTextView.SetOnEditorActionListener(searchListener);
+
             UpdateActionBar();
 
             return base.OnCreateOptionsMenu(menu);
@@ -119,44 +137,14 @@ namespace Nearest.Activities
         {
             switch (item.ItemId)
             {
-                case Android.Resource.Id.Home:
-                    return true;
                 case Resource.Id.action_search:
                     var expandListener = new ExpandListener();
-                    expandListener.MenuItemActionExpand += (s, e) => 
-                    {
-                        // search text view in action bar
-                        searchTextView = (AWidget.AutoCompleteTextView)item.ActionView;
-                        searchTextView.TextChanged += (s1, e1) => AutoComplete();
-                        searchTextView.ItemClick += (s1, e1) => { HideAutocomplete(); GetNearestAddress(); };
-
-                        var searchListener = new SearchActionListener();
-                        searchListener.Search += (s1, e1) => { HideAutocomplete(); GetNearestAddress(); };
-                        searchTextView.SetOnEditorActionListener(searchListener);
-
-                        // set focus
-                        searchTextView.RequestFocus();
-                        InputMethodManager inputManager = (InputMethodManager)GetSystemService(InputMethodService);
-                        inputManager.ToggleSoftInput(0, HideSoftInputFlags.NotAlways);
-
-                        if (actionBarMenu != null)
-                        {
-                            OnPrepareOptionsMenu(actionBarMenu);
-                            actionBarMenu.FindItem(Resource.Id.action_clear).SetVisible(true);
-                            actionBarMenu.FindItem(Resource.Id.action_voice).SetVisible(true);
-                            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(false);
-                        }
-                    };
-                    expandListener.MenuItemActionCollapse += (s, e) => 
-                    {
-                        HideAutocomplete();
-                        UpdateActionBar();
-                    };
+                    expandListener.MenuItemActionExpand += (s, e) => { StartSearch(); UpdateActionBar(); };
+                    expandListener.MenuItemActionCollapse += (s, e) => { FinishSearch(); UpdateActionBar(); };
                     Android.Support.V4.View.MenuItemCompat.SetOnActionExpandListener(item, expandListener);
                     return true;
                 case Resource.Id.action_clear:
-                    if (searchTextView != null)
-                        searchTextView.Text = string.Empty;
+                    searchTextView.Text = string.Empty;
                     return true;
                 case Resource.Id.action_add_to_fav:
                     var popup = new PopupMenu(this, FindViewById(Resource.Id.action_add_to_fav));
@@ -282,42 +270,39 @@ namespace Nearest.Activities
 
         private async void AutoComplete()
         {
-            if (searchTextView != null)
+            try
             {
-                try
-                {
-                    MapFragment mapFragment = FragmentManager.FindFragmentByTag<MapFragment>("MAP_FRAGMENT");
+                MapFragment mapFragment = FragmentManager.FindFragmentByTag<MapFragment>("MAP_FRAGMENT");
 
-                    List <Prediction> predictions = await GetSearchQueryPredictions(
-                        searchTextView.Text, GetString(Resource.String.google_maps_api_key), mapFragment?.MyLocation, 5000);
+                List<Prediction> predictions = await PlacesService.GetSearchQueryPredictions(searchTextView.Text,
+                        new Location() { lat = mapFragment.MyLocation.Latitude, lng = mapFragment.MyLocation.Longitude });
 
-                    AWidget.ArrayAdapter adapter = new AWidget.ArrayAdapter<string>(
-                        this, Android.Resource.Layout.SimpleDropDownItem1Line, predictions.Select(x => x.description).ToArray());
+                AWidget.ArrayAdapter adapter = new AWidget.ArrayAdapter<string>(
+                    this, Android.Resource.Layout.SimpleDropDownItem1Line, predictions.Select(x => x.description).ToArray());
 
-                    searchTextView.Adapter = adapter;
-                    adapter.NotifyDataSetChanged();
-                }
-                catch (ApiCallException)
-                {
-                }
-                catch (QueryAutoCompleteException)
-                {
-                }
+                searchTextView.Adapter = adapter;
+                adapter.NotifyDataSetChanged();
+            }
+            catch (ApiCallException)
+            {
+            }
+            catch (QueryAutoCompleteException)
+            {
             }
         }
 
         private async void GetNearestAddress()
         {
-            if (searchTextView != null && searchTextView.Text != string.Empty)
+            if (searchTextView.Text != string.Empty)
             {
                 try
                 {
                     MapFragment mapFragment = FragmentManager.FindFragmentByTag<MapFragment>("MAP_FRAGMENT");
 
-                    List<Place> places = await GetPlacesByQuery(
-                        searchTextView.Text, GetString(Resource.String.google_maps_api_key), mapFragment?.MyLocation, 5000);
+                    List<Place> places = await PlacesService.GetPlacesByQuery(searchTextView.Text, 
+                        new Location() { lat = mapFragment.MyLocation.Latitude, lng = mapFragment.MyLocation.Longitude });
 
-                    mapFragment?.MarkPlaces(places);
+                    mapFragment.MarkPlaces(places);
                 }
                 catch (ApiCallException)
                 {
@@ -328,15 +313,20 @@ namespace Nearest.Activities
             }
         }
 
-        private void HideAutocomplete()
+        private void StartSearch()
         {
-            if (searchTextView != null)
-            {
-                searchTextView.DismissDropDown();
+            IsInSearchMode = true;
+            searchTextView.RequestFocus();
+            InputMethodManager inputManager = (InputMethodManager)GetSystemService(InputMethodService);
+            inputManager.ToggleSoftInput(0, HideSoftInputFlags.NotAlways);
+        }
 
-                InputMethodManager inputManager = (InputMethodManager)GetSystemService(InputMethodService);
-                inputManager.HideSoftInputFromWindow(searchTextView.WindowToken, HideSoftInputFlags.NotAlways);
-            }
+        private void FinishSearch()
+        {
+            IsInSearchMode = false;
+            searchTextView.DismissDropDown();
+            InputMethodManager inputManager = (InputMethodManager)GetSystemService(InputMethodService);
+            inputManager.HideSoftInputFromWindow(searchTextView.WindowToken, HideSoftInputFlags.NotAlways);
         }
 
         private void UpdateActionBar()
@@ -345,11 +335,9 @@ namespace Nearest.Activities
 
             int actionBarTitleId = Resource.String.app_name;
             bool searchEnabled = true;
-            bool actionAddToFavEnabled = false;
              
             if (FragmentManager.BackStackEntryCount == 1)
             {
-                var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
                 navigationView.SetCheckedItem(Resource.Id.nav_map);
             }
             else if (FragmentManager.BackStackEntryCount > 1)
@@ -360,30 +348,32 @@ namespace Nearest.Activities
                     case nameof(FavoriteQueriesFragment):
                         actionBarTitleId = Resource.String.favorite_fragment_name;
                         searchEnabled = false;
-                        actionAddToFavEnabled = false;
+                        IsActionAddToFavEnabled = false;
                         break;
                     case nameof(FavoritePlacesFragment):
                         actionBarTitleId = Resource.String.favorite_fragment_name;
                         searchEnabled = false;
-                        actionAddToFavEnabled = false;
+                        IsActionAddToFavEnabled = false;
                         break;
                     case nameof(SettingsFragment):
                         actionBarTitleId = Resource.String.settings_fragment_name;
                         searchEnabled = false;
-                        actionAddToFavEnabled = false;
+                        IsActionAddToFavEnabled = false;
                         break;
                 }
             }
 
             SupportActionBar.SetTitle(actionBarTitleId);
             
-            if (actionBarMenu != null)
+            OnPrepareOptionsMenu(actionBarMenu);
+            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(IsActionAddToFavEnabled);
+            actionBarMenu.FindItem(Resource.Id.action_search).SetVisible(searchEnabled);
+
+            if (searchEnabled)
             {
-                OnPrepareOptionsMenu(actionBarMenu);
-                actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(actionAddToFavEnabled);
-                actionBarMenu.FindItem(Resource.Id.action_search).SetVisible(searchEnabled);
-                actionBarMenu.FindItem(Resource.Id.action_clear).SetVisible(false);
-                actionBarMenu.FindItem(Resource.Id.action_voice).SetVisible(false);
+                actionBarMenu.FindItem(Resource.Id.action_search).SetVisible(!IsInSearchMode);
+                actionBarMenu.FindItem(Resource.Id.action_clear).SetVisible(IsInSearchMode);
+                actionBarMenu.FindItem(Resource.Id.action_voice).SetVisible(IsInSearchMode);
             }
         }
 

@@ -2745,29 +2745,29 @@ namespace Nearest
 			// aapt resource value: 0x7f060034
 			public const int abc_toolbar_collapse_description = 2131099700;
 			
+			// aapt resource value: 0x7f060044
+			public const int add_fav_place = 2131099716;
+			
 			// aapt resource value: 0x7f060043
-			public const int add_fav_place = 2131099715;
+			public const int add_fav_query = 2131099715;
 			
-			// aapt resource value: 0x7f060042
-			public const int add_fav_query = 2131099714;
-			
-			// aapt resource value: 0x7f06003f
-			public const int add_to_fav = 2131099711;
-			
-			// aapt resource value: 0x7f06004b
-			public const int add_to_fav_alert_dismiss = 2131099723;
-			
-			// aapt resource value: 0x7f06004a
-			public const int add_to_fav_alert_edit_text_placeholder = 2131099722;
-			
-			// aapt resource value: 0x7f060049
-			public const int add_to_fav_alert_name = 2131099721;
+			// aapt resource value: 0x7f060040
+			public const int add_to_fav = 2131099712;
 			
 			// aapt resource value: 0x7f06004c
-			public const int add_to_fav_alert_ok = 2131099724;
+			public const int add_to_fav_alert_dismiss = 2131099724;
 			
-			// aapt resource value: 0x7f06003b
-			public const int app_name = 2131099707;
+			// aapt resource value: 0x7f06004b
+			public const int add_to_fav_alert_edit_text_placeholder = 2131099723;
+			
+			// aapt resource value: 0x7f06004a
+			public const int add_to_fav_alert_name = 2131099722;
+			
+			// aapt resource value: 0x7f06004d
+			public const int add_to_fav_alert_ok = 2131099725;
+			
+			// aapt resource value: 0x7f06003c
+			public const int app_name = 2131099708;
 			
 			// aapt resource value: 0x7f060036
 			public const int appbar_scrolling_view_behavior = 2131099702;
@@ -2781,11 +2781,11 @@ namespace Nearest
 			// aapt resource value: 0x7f060037
 			public const int character_counter_pattern = 2131099703;
 			
-			// aapt resource value: 0x7f06003d
-			public const int clear = 2131099709;
+			// aapt resource value: 0x7f06003e
+			public const int clear = 2131099710;
 			
-			// aapt resource value: 0x7f060041
-			public const int close_drawer = 2131099713;
+			// aapt resource value: 0x7f060042
+			public const int close_drawer = 2131099714;
 			
 			// aapt resource value: 0x7f060004
 			public const int common_android_wear_notification_needs_update_text = 2131099652;
@@ -2883,44 +2883,47 @@ namespace Nearest
 			// aapt resource value: 0x7f060021
 			public const int common_signin_button_text_long = 2131099681;
 			
-			// aapt resource value: 0x7f06004d
-			public const int double_click_to_exit = 2131099725;
+			// aapt resource value: 0x7f06004e
+			public const int double_click_to_exit = 2131099726;
 			
-			// aapt resource value: 0x7f060048
-			public const int exit = 2131099720;
+			// aapt resource value: 0x7f060049
+			public const int exit = 2131099721;
+			
+			// aapt resource value: 0x7f060047
+			public const int fav_places = 2131099719;
 			
 			// aapt resource value: 0x7f060046
-			public const int fav_places = 2131099718;
+			public const int fav_queries = 2131099718;
 			
-			// aapt resource value: 0x7f060045
-			public const int fav_queries = 2131099717;
-			
-			// aapt resource value: 0x7f060039
-			public const int favorite_fragment_name = 2131099705;
+			// aapt resource value: 0x7f06003a
+			public const int favorite_fragment_name = 2131099706;
 			
 			// aapt resource value: 0x7f060038
 			public const int google_maps_api_key = 2131099704;
 			
-			// aapt resource value: 0x7f060044
-			public const int map = 2131099716;
+			// aapt resource value: 0x7f060039
+			public const int language = 2131099705;
 			
-			// aapt resource value: 0x7f060040
-			public const int open_drawer = 2131099712;
+			// aapt resource value: 0x7f060045
+			public const int map = 2131099717;
 			
-			// aapt resource value: 0x7f06003c
-			public const int search = 2131099708;
+			// aapt resource value: 0x7f060041
+			public const int open_drawer = 2131099713;
 			
-			// aapt resource value: 0x7f06004e
-			public const int search_text_view_hint = 2131099726;
+			// aapt resource value: 0x7f06003d
+			public const int search = 2131099709;
 			
-			// aapt resource value: 0x7f06003e
-			public const int search_voice = 2131099710;
+			// aapt resource value: 0x7f06004f
+			public const int search_text_view_hint = 2131099727;
 			
-			// aapt resource value: 0x7f060047
-			public const int settings = 2131099719;
+			// aapt resource value: 0x7f06003f
+			public const int search_voice = 2131099711;
 			
-			// aapt resource value: 0x7f06003a
-			public const int settings_fragment_name = 2131099706;
+			// aapt resource value: 0x7f060048
+			public const int settings = 2131099720;
+			
+			// aapt resource value: 0x7f06003b
+			public const int settings_fragment_name = 2131099707;
 			
 			// aapt resource value: 0x7f060035
 			public const int status_bar_notification_info_overflow = 2131099701;

@@ -99,10 +99,10 @@
   <ItemGroup>
     <Compile Include="Fragments\FavoritePlacesFragment.cs" />
     <Compile Include="Fragments\FavoriteQueriesFragment.cs" />
-    <Compile Include="PlacesApi\Model\Exceptions.cs" />
-    <Compile Include="PlacesApi\PlacesApi.cs" />
-    <Compile Include="PlacesApi\Model\NearbyPlacesSearchResponse.cs" />
-    <Compile Include="PlacesApi\Model\QueryAutoCompleteResponse.cs" />
+    <Compile Include="GoogleApi\Model\Exceptions.cs" />
+    <Compile Include="GoogleApi\PlacesService.cs" />
+    <Compile Include="GoogleApi\Model\NearbyPlacesSearchResponse.cs" />
+    <Compile Include="GoogleApi\Model\QueryAutoCompleteResponse.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Fragments\MapFragment.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

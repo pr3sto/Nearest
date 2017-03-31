@@ -1,6 +1,6 @@
 using System;
 
-namespace Nearest.PlacesApi.Model
+namespace Nearest.GoogleApi.Model
 {
     public class ApiCallException : Exception
     {
