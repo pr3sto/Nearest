@@ -3,16 +3,19 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff46a2fd">
+    android:background="@color/background">
     <TextView
+        android:id="@+id/fav_list_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#ffffff"
-        android:text="List of favorits"
-        android:textSize="22dp"
-        android:textStyle="bold"
-        android:typeface="sans"
+        android:textColor="?attr/colorPrimary"
+        android:text="@string/empty_list"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center"
         android:layout_gravity="center"
         android:layout_centerInParent="true" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

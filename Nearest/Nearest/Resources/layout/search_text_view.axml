@@ -12,5 +12,5 @@
     android:singleLine="true"
     android:dropDownWidth="match_parent"
     android:dropDownHorizontalOffset="-1000dp"
-    android:dropDownVerticalOffset="15dp"
+    android:dropDownVerticalOffset="@dimen/autocomplete_dropdown_offset"
     android:theme="@style/AutoCompleteTextViewTheme" />

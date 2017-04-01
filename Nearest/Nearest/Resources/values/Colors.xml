@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- main colors -->
+  <item name="main" type="color">#F44336</item>
+  <item name="main_dark" type="color">#C62828</item>
+  <item name="background" type="color">#FFFFFF</item>
+  <!-- item view colors -->
+  <item name="item_view_normal" type="color">#FFFFFF</item>
+  <item name="item_view_removed" type="color">#C62828</item>
+</resources>

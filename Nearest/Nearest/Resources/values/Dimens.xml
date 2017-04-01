@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <dimen name="item_view_height">56dp</dimen>
+  <dimen name="autocomplete_dropdown_offset">15dp</dimen>
+  <dimen name="standart_padding">10dp</dimen>
+  <dimen name="nav_header_height">150dp</dimen>
+  <dimen name="nav_header_text_size">40dp</dimen>
+</resources>
