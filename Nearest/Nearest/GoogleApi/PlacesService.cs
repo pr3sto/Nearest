@@ -38,7 +38,7 @@ namespace Nearest.GoogleApi
                 throw new ApiCallException();
             }
 
-            QueryAutoCompleteResponse responseJson = JsonConvert.DeserializeObject<QueryAutoCompleteResponse>(response);
+            var responseJson = JsonConvert.DeserializeObject<QueryAutoCompleteResponse>(response);
 
             if (!new List<string>() { "OK", "ZERO_RESULTS", "OVER_QUERY_LIMIT" }.Contains(responseJson.status))
                 throw new QueryAutoCompleteException(responseJson.status);
@@ -71,7 +71,7 @@ namespace Nearest.GoogleApi
                 throw new ApiCallException();
             }
 
-            NearbyPlacesSearchResponse responseJson = JsonConvert.DeserializeObject<NearbyPlacesSearchResponse>(response);
+            var responseJson = JsonConvert.DeserializeObject<NearbyPlacesSearchResponse>(response);
 
             if (!new List<string>() { "OK", "ZERO_RESULTS", "OVER_QUERY_LIMIT" }.Contains(responseJson.status))
                 throw new NearbyPlacesSearchException(responseJson.status);

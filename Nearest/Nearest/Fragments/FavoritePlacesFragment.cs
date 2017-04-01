@@ -1,11 +1,15 @@
+using System.Linq;
+using System.Collections.Generic;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Support.V7.Widget.Helper;
 using Android.Views;
 using Android.Widget;
+using Nearest.Models;
 using Nearest.CustomRecyclerView;
 using Nearest.CustomRecyclerView.Models;
+using Nearest.Storage;
 
 namespace Nearest.Fragments
 {
@@ -18,26 +22,21 @@ namespace Nearest.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            if (savedInstanceState != null)
-            {
-                // TODO create state
-            }
         }
 
         public override void OnSaveInstanceState(Bundle outState)
         {
             base.OnSaveInstanceState(outState);
-
-            // TODO save state
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.favorites, container, false);
 
-            adapter = new CustomAdapter(Activity.ApplicationContext);
+            string key = Activity.ApplicationContext.GetString(Resource.String.fav_places_storage_key);
+            var storage = new SharedPreference<FavoritePlace>(Activity.ApplicationContext, key);
 
+            adapter = new CustomAdapter(Activity.ApplicationContext);
             adapter.ItemRemoved += (s, item) =>
             {
                 if (adapter.ItemCount == 0)
@@ -45,11 +44,14 @@ namespace Nearest.Fragments
                     recyclerView.Visibility = ViewStates.Gone;
                     emptyTextView.Visibility = ViewStates.Visible;
                 }
+
+                var items = storage.GetItems();
+                storage.RemoveItem(items.Where(x => x.Id == item.Id).FirstOrDefault());
             };
 
-            for (int i = 0; i < 20; i++)
-                adapter.Items.Add(new CustomItem() { Id = i, Name = "name " + i, Description = "description " + i });
-
+            List<FavoritePlace> places = storage.GetItems();
+            foreach (var place in places)
+                adapter.Items.Add(new CustomItem() { Id = place.Id, Name = place.Name, Description = place.Description });
 
             emptyTextView = view.FindViewById<TextView>(Resource.Id.fav_list_empty);
             recyclerView = view.FindViewById<RecyclerView>(Resource.Id.recycler_view);
@@ -59,7 +61,7 @@ namespace Nearest.Fragments
             recyclerView.HasFixedSize = true;
 
             // swipe to remove
-            ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(
+            var mItemTouchHelper = new ItemTouchHelper(
                 new ItemTouchCallback(0, ItemTouchHelper.Left, Activity.ApplicationContext, adapter));
             mItemTouchHelper.AttachToRecyclerView(recyclerView);
 

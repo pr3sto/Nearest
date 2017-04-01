@@ -110,12 +110,15 @@
     <Compile Include="Fragments\MapFragment.cs" />
     <Compile Include="CustomRecyclerView\Adapter.cs" />
     <Compile Include="CustomRecyclerView\ItemTouchCallback.cs" />
+    <Compile Include="Models\FavoritePlace.cs" />
+    <Compile Include="Models\FavoriteQuery.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fragments\SettingsFragment.cs" />
     <AndroidResource Include="Resources\values\Colors.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <Compile Include="Storage\SharedPreference.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\app_bar.axml">

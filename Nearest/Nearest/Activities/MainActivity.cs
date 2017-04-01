@@ -11,6 +11,8 @@ using Android.Views.InputMethods;
 using Android.App;
 using Android.Runtime;
 using AWidget = Android.Widget;
+using Nearest.Models;
+using Nearest.Storage;
 using Nearest.Fragments;
 using Nearest.GoogleApi;
 using Nearest.GoogleApi.Model;
@@ -303,6 +305,14 @@ namespace Nearest.Activities
                         new Location() { lat = mapFragment.MyLocation.Latitude, lng = mapFragment.MyLocation.Longitude });
 
                     mapFragment.MarkPlaces(places);
+
+                    string key1 = ApplicationContext.GetString(Resource.String.fav_places_storage_key);
+                    var storage1 = new SharedPreference<FavoritePlace>(ApplicationContext, key1);
+                    storage1.AddItem(new FavoritePlace() { Id = storage1.GetItems().Count, Name = searchTextView.Text, Place = places[0] });
+
+                    string key2 = ApplicationContext.GetString(Resource.String.fav_query_storage_key);
+                    var storage2 = new SharedPreference<FavoriteQuery>(ApplicationContext, key2);
+                    storage2.AddItem(new FavoriteQuery() { Id = storage2.GetItems().Count, Name = searchTextView.Text, Query = searchTextView.Text });
                 }
                 catch (ApiCallException)
                 {
