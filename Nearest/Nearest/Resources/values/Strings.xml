@@ -36,4 +36,7 @@
   <!-- favorites fragment -->
   <string name="button_undo">Отменить</string>
   <string name="empty_list">Список пуст</string>
+  <!-- timeouts -->
+  <string name="doubleclick_to_exit_reset_timeout">2000</string>
+  <string name="item_view_remove_timeout">2000</string>
 </resources>

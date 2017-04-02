@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nearest.GoogleApi.Model
+namespace Nearest.GoogleApi.Models
 {
     public class NearbyPlacesSearchResponse
     {

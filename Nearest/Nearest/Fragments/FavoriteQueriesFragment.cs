@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Android.App;
@@ -18,6 +19,9 @@ namespace Nearest.Fragments
         private CustomAdapter adapter;
         private RecyclerView recyclerView;
         private TextView emptyTextView;
+        private List<FavoriteQuery> favQueries;
+
+        public EventHandler<string> ItemClicked;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,7 +40,14 @@ namespace Nearest.Fragments
             string key = Activity.ApplicationContext.GetString(Resource.String.fav_query_storage_key);
             var storage = new SharedPreference<FavoriteQuery>(Activity.ApplicationContext, key);
 
+            favQueries = storage.GetItems();
+
             adapter = new CustomAdapter(Activity.ApplicationContext);
+            adapter.ItemClicked += (s, item) =>
+            {
+                var query = favQueries.Single(x => x.Id == item.Id);
+                ItemClicked?.Invoke(this, query.Query);
+            };
             adapter.ItemRemoved += (s, item) =>
             {
                 if (adapter.ItemCount == 0)
@@ -44,13 +55,10 @@ namespace Nearest.Fragments
                     recyclerView.Visibility = ViewStates.Gone;
                     emptyTextView.Visibility = ViewStates.Visible;
                 }
-
-                var items = storage.GetItems();
-                storage.RemoveItem(items.Single(x => x.Id == item.Id));
+                storage.RemoveItem(favQueries.Single(x => x.Id == item.Id));
             };
 
-            List<FavoriteQuery> queries = storage.GetItems();
-            foreach (var query in queries)
+            foreach (var query in favQueries)
                 adapter.Items.Add(new CustomItem() { Id = query.Id, Name = query.Name, Description = query.Query });
 
             emptyTextView = view.FindViewById<TextView>(Resource.Id.fav_list_empty);

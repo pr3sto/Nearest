@@ -6,7 +6,6 @@ namespace Nearest.CustomRecyclerView
 {
     class CustomViewHolder : RecyclerView.ViewHolder
     {
-
         public TextView NameTextView { get; set; }
         public TextView DescriptionTextView { get; set; }
         public Button UndoButton { get; set; }

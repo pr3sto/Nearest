@@ -16,18 +16,17 @@ namespace Nearest.CustomRecyclerView
 
         internal class ClickListener : Java.Lang.Object, View.IOnClickListener
         {
-            public EventHandler Click;
+            public EventHandler Clicked;
 
             public void OnClick(View v)
             {
-                Click?.Invoke(this, EventArgs.Empty);
+                Clicked?.Invoke(this, EventArgs.Empty);
             }
         }
 
         #endregion
 
-        private const int PENDING_REMOVAL_TIMEOUT = 2000;
-
+        public EventHandler<CustomItem> ItemClicked;
         public EventHandler<CustomItem> ItemRemoved;
 
         public List<CustomItem> Items { get; set; } = new List<CustomItem>();
@@ -57,8 +56,13 @@ namespace Nearest.CustomRecyclerView
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             CustomViewHolder viewHolder = (CustomViewHolder)holder;
-            CustomItem item = Items[position];
 
+            // set click listener
+            var itemClickListener = new ClickListener();
+            itemClickListener.Clicked += (s, e) => ItemClicked(this, Items[position]);
+            viewHolder.ItemView.SetOnClickListener(itemClickListener);
+
+            CustomItem item = Items[position];
             if (itemsPendingRemoval.Contains(item))
             {
                 // "undo" state
@@ -67,7 +71,7 @@ namespace Nearest.CustomRecyclerView
                 viewHolder.DescriptionTextView.Visibility = ViewStates.Gone;
                 viewHolder.UndoButton.Visibility = ViewStates.Visible;
                 var undoListener = new ClickListener();
-                undoListener.Click += (s, e) =>
+                undoListener.Clicked += (s, e) =>
                 {
                     Action pendingRemovalAction = pendingRunnables[item.Id];
                     pendingRunnables.Remove(item.Id);
@@ -109,7 +113,8 @@ namespace Nearest.CustomRecyclerView
                     Remove(Items.IndexOf(item));
                     ItemRemoved?.Invoke(this, item);
                 });
-                removeHandler.PostDelayed(pendingRemovalRunnable, PENDING_REMOVAL_TIMEOUT);
+                int timeout = int.Parse(context.GetString(Resource.String.item_view_remove_timeout));
+                removeHandler.PostDelayed(pendingRemovalRunnable, timeout);
                 pendingRunnables.Add(item.Id, pendingRemovalRunnable);
             }
         }

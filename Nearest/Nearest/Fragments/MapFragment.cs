@@ -5,7 +5,7 @@ using Android.OS;
 using Android.Views;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
-using Nearest.GoogleApi.Model;
+using Nearest.GoogleApi.Models;
 
 namespace Nearest.Fragments
 {

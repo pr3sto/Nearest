@@ -29,7 +29,7 @@ namespace Nearest.CustomRecyclerView
         {
             background = new ColorDrawable(new Color(ContextCompat.GetColor(context, Resource.Color.item_view_removed)));
             xMark = ContextCompat.GetDrawable(context, Resource.Drawable.ic_action_delete);
-            xMarkMargin = 16;
+            xMarkMargin = (int)context.Resources.GetDimension(Resource.Dimension.item_view_trash_mark_margin);
             initiated = true;
         }
 

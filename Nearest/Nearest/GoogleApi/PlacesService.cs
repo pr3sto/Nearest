@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net;
 using Newtonsoft.Json;
-using Nearest.GoogleApi.Model;
+using Nearest.GoogleApi.Models;
 
 namespace Nearest.GoogleApi
 {

@@ -1620,7 +1620,7 @@ namespace Nearest
 			public const int item_touch_helper_max_drag_scroll_per_frame = 2131296256;
 			
 			// aapt resource value: 0x7f090068
-			public const int item_view_height = 2131296360;
+			public const int item_view_trash_mark_margin = 2131296360;
 			
 			// aapt resource value: 0x7f09006b
 			public const int nav_header_height = 2131296363;
@@ -2940,6 +2940,9 @@ namespace Nearest
 			// aapt resource value: 0x7f060050
 			public const int double_click_to_exit = 2131099728;
 			
+			// aapt resource value: 0x7f060054
+			public const int doubleclick_to_exit_reset_timeout = 2131099732;
+			
 			// aapt resource value: 0x7f060053
 			public const int empty_list = 2131099731;
 			
@@ -2963,6 +2966,9 @@ namespace Nearest
 			
 			// aapt resource value: 0x7f060038
 			public const int google_maps_api_key = 2131099704;
+			
+			// aapt resource value: 0x7f060055
+			public const int item_view_remove_timeout = 2131099733;
 			
 			// aapt resource value: 0x7f060039
 			public const int language = 2131099705;

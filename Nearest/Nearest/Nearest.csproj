@@ -102,10 +102,10 @@
     <Compile Include="CustomRecyclerView\ViewHolder.cs" />
     <Compile Include="Fragments\FavoritePlacesFragment.cs" />
     <Compile Include="Fragments\FavoriteQueriesFragment.cs" />
-    <Compile Include="GoogleApi\Model\Exceptions.cs" />
+    <Compile Include="GoogleApi\Models\Exceptions.cs" />
     <Compile Include="GoogleApi\PlacesService.cs" />
-    <Compile Include="GoogleApi\Model\NearbyPlacesSearchResponse.cs" />
-    <Compile Include="GoogleApi\Model\QueryAutoCompleteResponse.cs" />
+    <Compile Include="GoogleApi\Models\NearbyPlacesSearchResponse.cs" />
+    <Compile Include="GoogleApi\Models\QueryAutoCompleteResponse.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Fragments\MapFragment.cs" />
     <Compile Include="CustomRecyclerView\Adapter.cs" />

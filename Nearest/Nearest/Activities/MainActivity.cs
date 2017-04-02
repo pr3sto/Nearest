@@ -15,7 +15,7 @@ using Nearest.Models;
 using Nearest.Storage;
 using Nearest.Fragments;
 using Nearest.GoogleApi;
-using Nearest.GoogleApi.Model;
+using Nearest.GoogleApi.Models;
 
 namespace Nearest.Activities
 {
@@ -185,9 +185,12 @@ namespace Nearest.Activities
                 AWidget.Toast.MakeText(this, GetString(Resource.String.double_click_to_exit), 
                     AWidget.ToastLength.Short).Show();
 
-                new Handler().PostDelayed(() => doubleBackToExitPressedOnce = false, 2000);
+                int timeout = int.Parse(ApplicationContext.GetString(Resource.String.doubleclick_to_exit_reset_timeout));
+                new Handler().PostDelayed(() => doubleBackToExitPressedOnce = false, timeout);
             }
         }
+
+        #region Private methods
 
         private void ChangeMainFragment(object sender, NavigationView.NavigationItemSelectedEventArgs e)
         {
@@ -210,11 +213,15 @@ namespace Nearest.Activities
                     case (Resource.Id.nav_map):
                         break;
                     case (Resource.Id.nav_fav_queries):
-                        ft.Add(Resource.Id.main_fragment, new FavoriteQueriesFragment(), "SECOND_FRAGMENT");
+                        var fqf = new FavoriteQueriesFragment();
+                        fqf.ItemClicked += (s, query) => { searchTextView.Text = query; GetNearestAddress(); };
+                        ft.Add(Resource.Id.main_fragment, fqf, "SECOND_FRAGMENT");
                         ft.Commit();
                         break;
                     case (Resource.Id.nav_fav_places):
-                        ft.Add(Resource.Id.main_fragment, new FavoritePlacesFragment(), "SECOND_FRAGMENT");
+                        var fpf = new FavoritePlacesFragment();
+                        fpf.ItemClicked += (s, place) => { searchTextView.Text = place.name; GetNearestAddress(); };
+                        ft.Add(Resource.Id.main_fragment, fpf, "SECOND_FRAGMENT");
                         ft.Commit();
                         break;
                     case (Resource.Id.nav_settings):
@@ -230,8 +237,6 @@ namespace Nearest.Activities
             drawerLayout.CloseDrawers();
             UpdateActionBar();
         }
-
-        #region Private methods
 
         private void ShowAlert(object sender, PopupMenu.MenuItemClickEventArgs e)
         {

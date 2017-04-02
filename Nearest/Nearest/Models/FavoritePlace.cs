@@ -1,4 +1,4 @@
-using Nearest.GoogleApi.Model;
+using Nearest.GoogleApi.Models;
 using Nearest.Storage;
 
 namespace Nearest.Models
