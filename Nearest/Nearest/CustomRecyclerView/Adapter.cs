@@ -104,7 +104,7 @@ namespace Nearest.CustomRecyclerView
             if (!itemsPendingRemoval.Contains(item))
             {
                 itemsPendingRemoval.Add(item);
-                
+
                 // redraw row in "undo" state
                 NotifyItemChanged(position);
 

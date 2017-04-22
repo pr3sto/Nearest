@@ -11,8 +11,8 @@ namespace Nearest.CustomRecyclerView
     class ItemTouchCallback : ItemTouchHelper.SimpleCallback
     {
         private Drawable background;
-        private Drawable xMark;
-        private int xMarkMargin;
+        private Drawable trashMark;
+        private int trashMarkMargin;
         bool initiated;
 
         private Context context;
@@ -25,11 +25,11 @@ namespace Nearest.CustomRecyclerView
             this.adapter = adapter;
         }
 
-        private void init()
+        private void Init()
         {
             background = new ColorDrawable(new Color(ContextCompat.GetColor(context, Resource.Color.item_view_removed)));
-            xMark = ContextCompat.GetDrawable(context, Resource.Drawable.ic_action_delete);
-            xMarkMargin = (int)context.Resources.GetDimension(Resource.Dimension.item_view_trash_mark_margin);
+            trashMark = ContextCompat.GetDrawable(context, Resource.Drawable.ic_action_delete);
+            trashMarkMargin = (int)context.Resources.GetDimension(Resource.Dimension.item_view_trash_mark_margin);
             initiated = true;
         }
 
@@ -62,24 +62,24 @@ namespace Nearest.CustomRecyclerView
                 return;
 
             if (!initiated)
-                init();
+                Init();
 
             // draw background
             background.SetBounds(itemView.Right + (int)dX, itemView.Top, itemView.Right, itemView.Bottom);
             background.Draw(canvas);
 
-            // draw x mark
+            // draw trash mark
             int itemHeight = itemView.Bottom - itemView.Top;
-            int intrinsicWidth = xMark.IntrinsicWidth;
-            int intrinsicHeight = xMark.IntrinsicWidth;
+            int intrinsicWidth = trashMark.IntrinsicWidth;
+            int intrinsicHeight = trashMark.IntrinsicWidth;
 
-            int xMarkLeft = itemView.Right - xMarkMargin - intrinsicWidth;
-            int xMarkRight = itemView.Right - xMarkMargin;
-            int xMarkTop = itemView.Top + (itemHeight - intrinsicHeight) / 2;
-            int xMarkBottom = xMarkTop + intrinsicHeight;
-            xMark.SetBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
+            int markLeft = itemView.Right - trashMarkMargin - intrinsicWidth;
+            int markRight = itemView.Right - trashMarkMargin;
+            int markTop = itemView.Top + (itemHeight - intrinsicHeight) / 2;
+            int markBottom = markTop + intrinsicHeight;
+            trashMark.SetBounds(markLeft, markTop, markRight, markBottom);
 
-            xMark.Draw(canvas);
+            trashMark.Draw(canvas);
 
             base.OnChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }

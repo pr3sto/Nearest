@@ -18,7 +18,7 @@ namespace Nearest.CustomRecyclerView
             this.context = context;
         }
 
-        private void init()
+        private void Init()
         {
             background = new ColorDrawable(new Color(ContextCompat.GetColor(context, Resource.Color.item_view_removed)));
             initiated = true;
@@ -27,7 +27,7 @@ namespace Nearest.CustomRecyclerView
         public override void OnDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state)
         {
             if (!initiated)
-                init();
+                Init();
 
             if (parent.GetItemAnimator().IsRunning)
             {

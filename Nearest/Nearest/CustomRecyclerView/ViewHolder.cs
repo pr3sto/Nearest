@@ -11,7 +11,7 @@ namespace Nearest.CustomRecyclerView
         public Button UndoButton { get; set; }
 
         public CustomViewHolder(ViewGroup parent) :
-            base(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.row_view, parent, false))
+            base(LayoutInflater.From(parent.Context).Inflate(Resource.Layout.custom_row_view, parent, false))
         {
             NameTextView = ItemView.FindViewById<TextView>(Resource.Id.text_view_name);
             DescriptionTextView = ItemView.FindViewById<TextView>(Resource.Id.text_view_description);
