@@ -35,7 +35,6 @@ namespace Nearest.GoogleApi
             request += "&destination=" + latitude + "," + longitude;
 
             // options
-            request += "&departure_time=best_guess";
             request += "&mode=" + Mode + "&unit=" + Unit;
             request += "&language=" + Language + "&key=" + ApiKey;
 
