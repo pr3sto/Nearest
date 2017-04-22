@@ -43,10 +43,4 @@ namespace Nearest.GoogleApi.Models
         public string photo_reference { get; set; }
         public int width { get; set; }
     }
-
-    public class Location
-    {
-        public double lat { get; set; }
-        public double lng { get; set; }
-    }  
 }

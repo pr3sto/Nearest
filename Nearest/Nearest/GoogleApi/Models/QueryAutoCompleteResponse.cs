@@ -2,13 +2,13 @@
 
 namespace Nearest.GoogleApi.Models
 {
-    public class QueryAutoCompleteResponse
-    {
-        public List<Prediction> predictions { get; set; }
-        public string status { get; set; }
-    }
+	public class QueryAutoCompleteResponse
+	{
+		public List<Prediction> predictions { get; set; }
+		public string status { get; set; }
+	}
 
-    public class Prediction
+	public class Prediction
 	{
 		public string description { get; set; }
 		public string id { get; set; }

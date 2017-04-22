@@ -1,13 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Net;
 using Newtonsoft.Json;
 using Nearest.GoogleApi.Models;
+using Nearest.GoogleApi.Helpers;
 
 namespace Nearest.GoogleApi
 {
-    public static class PlacesService
+    public class PlacesService : BaseService
     {
         private const string AUTOCOMPLETE_API = "https://maps.googleapis.com/maps/api/place/queryautocomplete/json";
         private const string NEARBYSEARCH_API = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
@@ -18,65 +17,58 @@ namespace Nearest.GoogleApi
 
         public static async Task<List<Prediction>> GetSearchQueryPredictions(string searchQueryText, Location myLocation)
         {
+            if (myLocation == null)
+                throw new NearbyPlacesSearchException("my location is null");
+
             string request = AUTOCOMPLETE_API + "?input=" + searchQueryText;
 
-            string latitude = myLocation.lat.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
-            string longitude = myLocation.lng.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
+            // my location
+            string latitude = Utils.GetFormatedCoord(myLocation.lat);
+            string longitude = Utils.GetFormatedCoord(myLocation.lng);
+            request += "&location=" + latitude + "," + longitude;
 
-            request += "&location=" + latitude + "," + longitude + "&radius=" + Radius;
+            // options
+            request += "&radius=" + Radius;
             request += "&language=" + Language + "&key=" + ApiKey;
 
-            string response = "";
+            string responseJson = await GetResponse(request);
+            var response = JsonConvert.DeserializeObject<QueryAutoCompleteResponse>(responseJson);
 
-            try
-            {
-                using (WebClient webclient = new WebClient())
-                    response = await webclient.DownloadStringTaskAsync(new Uri(request));
-            }
-            catch (WebException)
-            {
-                throw new ApiCallException();
-            }
+            if (!new List<string>() { "OK", "ZERO_RESULTS" }.Contains(response.status))
+                throw new QueryAutoCompleteException(response.status);
 
-            var responseJson = JsonConvert.DeserializeObject<QueryAutoCompleteResponse>(response);
+            if (response.status == "OVER_QUERY_LIMIT")
+                throw new OverQueryLimitException();
 
-            if (!new List<string>() { "OK", "ZERO_RESULTS", "OVER_QUERY_LIMIT" }.Contains(responseJson.status))
-                throw new QueryAutoCompleteException(responseJson.status);
-
-            return responseJson.predictions;
+            return response.predictions;
         }
 
         public static async Task<List<Place>> GetPlacesByQuery(string searchQueryText, Location myLocation)
         {
             if (myLocation == null)
-                throw new NearbyPlacesSearchException("location is null");
+                throw new NearbyPlacesSearchException("my location is null");
 
             string request = NEARBYSEARCH_API + "?keyword=" + searchQueryText;
 
-            string latitude = myLocation.lat.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
-            string longitude = myLocation.lng.ToString("0.000000", System.Globalization.CultureInfo.InvariantCulture);
+            // my location
+            string latitude = Utils.GetFormatedCoord(myLocation.lat);
+            string longitude = Utils.GetFormatedCoord(myLocation.lng);
+            request += "&location=" + latitude + "," + longitude;
 
-            request += "&location=" + latitude + "," + longitude + "&radius=" + Radius;
-            request += "&language=" + Language + "&key=" + ApiKey;  
+            // options
+            request += "&radius=" + Radius;
+            request += "&language=" + Language + "&key=" + ApiKey;
 
-            string response = "";
+            string responseJson = await GetResponse(request);
+            var response = JsonConvert.DeserializeObject<NearbyPlacesSearchResponse>(responseJson);
 
-            try
-            {
-                using (WebClient webclient = new WebClient())
-                    response = await webclient.DownloadStringTaskAsync(new Uri(request));
-            }
-            catch (WebException)
-            {
-                throw new ApiCallException();
-            }
+            if (!new List<string>() { "OK", "ZERO_RESULTS" }.Contains(response.status))
+                throw new NearbyPlacesSearchException(response.status);
 
-            var responseJson = JsonConvert.DeserializeObject<NearbyPlacesSearchResponse>(response);
+            if (response.status == "OVER_QUERY_LIMIT")
+                throw new OverQueryLimitException();
 
-            if (!new List<string>() { "OK", "ZERO_RESULTS", "OVER_QUERY_LIMIT" }.Contains(responseJson.status))
-                throw new NearbyPlacesSearchException(responseJson.status);
-
-            return responseJson.results;
+            return response.results;
         }
     }
 }
