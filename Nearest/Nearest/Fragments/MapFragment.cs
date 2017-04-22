@@ -1,11 +1,12 @@
 using System;
-using System.Collections.Generic;
 using Android.App;
 using Android.OS;
 using Android.Views;
+using Android.Support.V4.Content;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Nearest.GoogleApi.Models;
+using Nearest.GoogleApi.Helpers;
 
 namespace Nearest.Fragments
 {
@@ -31,7 +32,7 @@ namespace Nearest.Fragments
         private MapView mapView;
         private GoogleMap map;
 
-        public Android.Locations.Location MyLocation { get; set; } = null;
+        public Location MyLocation { get; set; } = null;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -45,11 +46,11 @@ namespace Nearest.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view = inflater.Inflate(Resource.Layout.map, container, false);
+            View view = inflater.Inflate(Resource.Layout.map_fragment, container, false);
 
             mapView = view.FindViewById<MapView>(Resource.Id.map_view);
             mapView.OnCreate(savedInstanceState);
-            mapView.OnResume(); // needed to get the map to display immediately
+            mapView.OnResume();
             MapsInitializer.Initialize(Activity.ApplicationContext);
 
             var mapReadyCallback = new OnMapReadyCallback();
@@ -67,7 +68,8 @@ namespace Nearest.Fragments
                 map.UiSettings.TiltGesturesEnabled = true;
                 map.UiSettings.ZoomControlsEnabled = true;
                 map.UiSettings.ZoomGesturesEnabled = true;
-                map.MyLocationChange += (s1, e1) => MyLocation = e1.Location;
+                map.MyLocationChange += (s1, e1) => MyLocation = new Location()
+                { lat = e1.Location.Latitude, lng = e1.Location.Longitude };
             };
             mapView.GetMapAsync(mapReadyCallback);
 
@@ -98,35 +100,40 @@ namespace Nearest.Fragments
             mapView.OnLowMemory();
         }
 
-        public void MarkPlaces(List<Place> places)
+        public void DrawRouteToPlace(Route route, Place place)
         {
-            foreach (var place in places)
-                MarkOnMap(place.name, new LatLng(place.geometry.location.lat, place.geometry.location.lng));
+            if (MyLocation == null)
+                return;
 
-            if (MyLocation != null)
-                UpdateCameraPosition(new LatLng(MyLocation.Latitude, MyLocation.Longitude));
+            map.Clear();
+
+            string snippet = route.legs[0].distance.text +
+                ", " + route.legs[0].duration.text;
+
+            var marker = new MarkerOptions();
+            marker.SetTitle(place.name);
+            marker.SetSnippet(snippet);
+            marker.SetPosition(new LatLng(place.geometry.location.lat, place.geometry.location.lng));
+            map.AddMarker(marker);
+
+            var polyline = new PolylineOptions();
+            polyline.InvokeColor(ContextCompat.GetColor(Activity.ApplicationContext, Resource.Color.route_polyline));
+            var points = RouteHelper.GetPointsFromRoute(route);
+            foreach (var point in points)
+                polyline.Add(new LatLng(point.lat, point.lng));
+
+            map.AddPolyline(polyline);
+
+            UpdateCameraPosition(new LatLng(MyLocation.lat, MyLocation.lng));
         }
 
         #region Private methods
-
-        private void MarkOnMap(string title, LatLng pos)
-        {
-            Activity.RunOnUiThread(() =>
-            {
-                var marker = new MarkerOptions();
-                marker.SetTitle(title);
-                marker.SetPosition(pos);
-                map.AddMarker(marker);
-            });
-        }
 
         private void UpdateCameraPosition(LatLng pos)
         {
             CameraPosition.Builder builder = CameraPosition.InvokeBuilder();
             builder.Target(pos);
             builder.Zoom(14);
-            builder.Bearing(45);
-            builder.Tilt(90);
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
             map.AnimateCamera(cameraUpdate);

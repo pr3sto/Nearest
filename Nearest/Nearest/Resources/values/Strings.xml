@@ -1,9 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="language">ru</string>
+  <string name="no_internet">Подключение к интернету отсутствует</string>
+  <string name="please_wait">Пожалуйста, подождите...</string>
+  <string name="speak_now">Говорите сейчас</string>
+  <string name="not_recognized">Не удалось распознать запрос</string>
+  <string name="double_click_to_exit">Нажмите еще раз для выхода</string>
+
   <!-- storage -->
   <string name="fav_query_storage_key">Queries</string>
   <string name="fav_places_storage_key">Places</string>
+  <!-- timeouts -->
+  <string name="doubleclick_to_exit_reset_timeout">2000</string>
+  <string name="item_view_remove_timeout">2000</string>
+
   <!-- fragments names -->
   <string name="favorite_fragment_name">Избранное</string>
   <string name="settings_fragment_name">Настройки</string>
@@ -29,14 +39,30 @@
   <string name="add_to_fav_alert_edit_text_placeholder">Введите название</string>
   <string name="add_to_fav_alert_dismiss">Отмена</string>
   <string name="add_to_fav_alert_ok">Ок</string>
-  <!-- exit -->
-  <string name="double_click_to_exit">Нажмите еще раз для выхода</string>
   <!-- map fragment -->
   <string name="search_text_view_hint">Введите запрос</string>
+  <string name="my_location_unavaliable">Не удается распознать ваше местоположение</string>
+  <string name="no_places_found">По запросу ничего не найдено</string>
+  <string name="saved">Сохранено</string>
   <!-- favorites fragment -->
   <string name="button_undo">Отменить</string>
   <string name="empty_list">Список пуст</string>
-  <!-- timeouts -->
-  <string name="doubleclick_to_exit_reset_timeout">2000</string>
-  <string name="item_view_remove_timeout">2000</string>
+  <!-- settings fragment -->
+  <string name="api_category">Настройки Google Api</string>
+  <string name="gps_category">GPS</string>
+  <string name="gps_summary">Включить GPS для повышенной точности</string>
+  <string name="gps_title">GPS</string>
+  <string name="vechicle_mode_title">Способ передвижения</string>
+  <string name="echicle_mode_dialog_title">Выберите предпочитаемый способ передвижения</string>
+  <string name="unit_system_title">Система мер</string>
+  <string name="unit_system_dialog_title">Выберите систему мер</string>
+
+  <!-- vechicle mode -->
+  <string name="vechicle_mode_car">На машине</string>
+  <string name="vechicle_mode_walk">Пешком</string>
+  <string name="vechicle_mode_bicycle">На велосипеде</string>
+  <string name="vechicle_mode_transit">На общественном транспорте</string>
+  <!-- unit system -->
+  <string name="unit_system_metric">Метрическая</string>
+  <string name="unit_system_imperial">Имперская</string>
 </resources>

@@ -35,10 +35,10 @@ namespace Nearest.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view = inflater.Inflate(Resource.Layout.favorites, container, false);
+            View view = inflater.Inflate(Resource.Layout.favorites_fragment, container, false);
 
             string key = Activity.ApplicationContext.GetString(Resource.String.fav_query_storage_key);
-            var storage = new SharedPreference<FavoriteQuery>(Activity.ApplicationContext, key);
+            var storage = new FavoritesStorage<FavoriteQuery>(Activity.ApplicationContext, key);
 
             favQueries = storage.GetItems();
 

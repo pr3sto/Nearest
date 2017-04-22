@@ -11,11 +11,15 @@ using Android.Views.InputMethods;
 using Android.App;
 using Android.Runtime;
 using AWidget = Android.Widget;
-using Nearest.Models;
-using Nearest.Storage;
 using Nearest.Fragments;
+using Nearest.Models;
 using Nearest.GoogleApi;
 using Nearest.GoogleApi.Models;
+using Nearest.Storage;
+using Nearest.Helpers;
+using Android.Speech;
+using Android.Content;
+using Android.Preferences;
 
 namespace Nearest.Activities
 {
@@ -59,31 +63,42 @@ namespace Nearest.Activities
 
         #endregion
 
+        private Place nearestPlace;
+
         private DrawerLayout drawerLayout;
         private NavigationView navigationView;
         private IMenu actionBarMenu;
         private AWidget.AutoCompleteTextView searchTextView;
 
-        private bool IsInSearchMode = false;
-        private bool IsActionAddToFavEnabled = false;
-
+        private bool isInSearchMode = false;
         private bool doubleBackToExitPressedOnce = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.main);
+            SetContentView(Resource.Layout.main_activity);
 
             // setup google api
             PlacesService.ApiKey = GetString(Resource.String.google_maps_api_key);
             PlacesService.Language = GetString(Resource.String.language);
+            DirectionsService.ApiKey = GetString(Resource.String.google_maps_api_key);
+            DirectionsService.Language = GetString(Resource.String.language);
+
+            var sharedPrefference = PreferenceManager.GetDefaultSharedPreferences(this);
+
+            string defMode = Resources.GetStringArray(Resource.Array.vechicle_mode_values)[0];
+            string defUnit = Resources.GetStringArray(Resource.Array.unit_system_values)[0];
+
+            DirectionsService.Mode = sharedPrefference.GetString("vechicle_mode_key", defMode);
+            DirectionsService.Unit = sharedPrefference.GetString("unit_system_key", defUnit);
+
 
             // init toolbar
-            var toolbar = FindViewById<Toolbar>(Resource.Id.app_bar);
+            var toolbar = FindViewById<Toolbar>(Resource.Id.action_bar);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            
+
             // create ActionBarDrawerToggle button and add it to the toolbar
             drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, Resource.String.open_drawer, Resource.String.close_drawer);
@@ -114,6 +129,8 @@ namespace Nearest.Activities
                     ft.Commit();
                 }
             }
+
+            CheckInternetConnection();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -124,10 +141,10 @@ namespace Nearest.Activities
             // init search text view
             searchTextView = (AWidget.AutoCompleteTextView)menu.FindItem(Resource.Id.action_search).ActionView;
             searchTextView.TextChanged += (s1, e1) => AutoComplete();
-            searchTextView.ItemClick += (s1, e1) => { FinishSearch(); GetNearestAddress(); };
+            searchTextView.ItemClick += (s1, e1) => { FinishSearch(); ShowRouteToNearestAddress(searchTextView.Text); };
 
             var searchListener = new SearchActionListener();
-            searchListener.Search += (s1, e1) => { FinishSearch(); GetNearestAddress(); };
+            searchListener.Search += (s1, e1) => { FinishSearch(); ShowRouteToNearestAddress(searchTextView.Text); };
             searchTextView.SetOnEditorActionListener(searchListener);
 
             UpdateActionBar();
@@ -141,12 +158,38 @@ namespace Nearest.Activities
             {
                 case Resource.Id.action_search:
                     var expandListener = new ExpandListener();
-                    expandListener.MenuItemActionExpand += (s, e) => { StartSearch(); UpdateActionBar(); };
-                    expandListener.MenuItemActionCollapse += (s, e) => { FinishSearch(); UpdateActionBar(); };
+                    expandListener.MenuItemActionExpand += (s, e) =>
+                    {
+                        StartSearch();
+                        UpdateActionBar();
+                    };
+                    expandListener.MenuItemActionCollapse += (s, e) =>
+                    {
+                        FinishSearch();
+                        UpdateActionBar();
+                    };
                     Android.Support.V4.View.MenuItemCompat.SetOnActionExpandListener(item, expandListener);
+                    CheckInternetConnection();
                     return true;
                 case Resource.Id.action_clear:
                     searchTextView.Text = string.Empty;
+                    return true;
+                case Resource.Id.action_voice:
+                    var voiceIntent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                    voiceIntent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+
+                    // message and modal dialog
+                    voiceIntent.PutExtra(RecognizerIntent.ExtraPrompt, GetString(Resource.String.speak_now));
+
+                    // end capturing speech if there is 3 seconds of silence
+                    voiceIntent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 3000);
+                    voiceIntent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 3000);
+                    voiceIntent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 30000);
+                    voiceIntent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+
+                    // method to specify other languages to be recognised here if desired
+                    voiceIntent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+                    StartActivityForResult(voiceIntent, 10);
                     return true;
                 case Resource.Id.action_add_to_fav:
                     var popup = new PopupMenu(this, FindViewById(Resource.Id.action_add_to_fav));
@@ -157,6 +200,28 @@ namespace Nearest.Activities
                 default:
                     return base.OnOptionsItemSelected(item);
             }
+        }
+
+        protected override void OnActivityResult(int requestCode, Result result, Intent data)
+        {
+            if (requestCode == 10)
+            {
+                if (result == Result.Ok)
+                {
+                    var matches = data.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                    if (matches.Count != 0)
+                    {
+                        string textInput = matches[0];
+                        searchTextView.Text = textInput;
+                        ShowRouteToNearestAddress(textInput);
+                    }
+                    else
+                        AWidget.Toast.MakeText(this, GetString(Resource.String.not_recognized),
+                            AWidget.ToastLength.Short).Show();
+                }
+            }
+
+            base.OnActivityResult(requestCode, result, data);
         }
 
         public override void OnBackPressed()
@@ -182,7 +247,7 @@ namespace Nearest.Activities
                 }
                 doubleBackToExitPressedOnce = true;
 
-                AWidget.Toast.MakeText(this, GetString(Resource.String.double_click_to_exit), 
+                AWidget.Toast.MakeText(this, GetString(Resource.String.double_click_to_exit),
                     AWidget.ToastLength.Short).Show();
 
                 int timeout = int.Parse(ApplicationContext.GetString(Resource.String.doubleclick_to_exit_reset_timeout));
@@ -192,7 +257,14 @@ namespace Nearest.Activities
 
         #region Private methods
 
-        private void ChangeMainFragment(object sender, NavigationView.NavigationItemSelectedEventArgs e)
+        private void CheckInternetConnection()
+        {
+            if (!Utils.IsNetworkAvailable(ApplicationContext))
+                AWidget.Toast.MakeText(this, GetString(Resource.String.no_internet),
+                   AWidget.ToastLength.Short).Show();
+        }
+
+        private void ClearFragmentsBackStack()
         {
             // pop all fragments except first
             int num_of_fragments = FragmentManager.BackStackEntryCount;
@@ -201,6 +273,11 @@ namespace Nearest.Activities
                 FragmentManager.PopBackStack();
                 num_of_fragments--;
             }
+        }
+
+        private void ChangeMainFragment(object sender, NavigationView.NavigationItemSelectedEventArgs e)
+        {
+            ClearFragmentsBackStack();
 
             // start transaction
             using (var ft = FragmentManager.BeginTransaction())
@@ -214,13 +291,29 @@ namespace Nearest.Activities
                         break;
                     case (Resource.Id.nav_fav_queries):
                         var fqf = new FavoriteQueriesFragment();
-                        fqf.ItemClicked += (s, query) => { searchTextView.Text = query; GetNearestAddress(); };
+                        fqf.ItemClicked += (s, query) =>
+                        {
+                            ClearFragmentsBackStack();
+                            OnPrepareOptionsMenu(actionBarMenu);
+                            actionBarMenu.FindItem(Resource.Id.action_search).ExpandActionView();
+                            searchTextView.Text = query;
+                            searchTextView.DismissDropDown();
+                            InputMethodManager inputManager = (InputMethodManager)GetSystemService(InputMethodService);
+                            inputManager.HideSoftInputFromWindow(searchTextView.WindowToken, HideSoftInputFlags.NotAlways);
+                            UpdateActionBar();
+                            ShowRouteToNearestAddress(query);
+                        };
                         ft.Add(Resource.Id.main_fragment, fqf, "SECOND_FRAGMENT");
                         ft.Commit();
                         break;
                     case (Resource.Id.nav_fav_places):
                         var fpf = new FavoritePlacesFragment();
-                        fpf.ItemClicked += (s, place) => { searchTextView.Text = place.name; GetNearestAddress(); };
+                        fpf.ItemClicked += (s, place) =>
+                        {
+                            ClearFragmentsBackStack();
+                            UpdateActionBar();
+                            ShowRouteToPlace(place);
+                        };
                         ft.Add(Resource.Id.main_fragment, fpf, "SECOND_FRAGMENT");
                         ft.Commit();
                         break;
@@ -232,7 +325,7 @@ namespace Nearest.Activities
                         FinishAffinity();
                         break;
                 }
-            }            
+            }
 
             drawerLayout.CloseDrawers();
             UpdateActionBar();
@@ -243,15 +336,33 @@ namespace Nearest.Activities
             switch (e.Item.ItemId)
             {
                 case (Resource.Id.action_add_fav_query):
-                    ShowAddToFavAlert(() => AWidget.Toast.MakeText(this, "save to fav queries", AWidget.ToastLength.Short).Show());
+                    ShowAddToFavAlert((name) =>
+                    {
+                        string key = ApplicationContext.GetString(Resource.String.fav_query_storage_key);
+                        var storage = new FavoritesStorage<FavoriteQuery>(ApplicationContext, key);
+                        storage.AddItem(new FavoriteQuery()
+                        { Id = storage.GetUniqueId(), Name = name, Query = searchTextView.Text });
+
+                        AWidget.Toast.MakeText(this, GetString(Resource.String.saved),
+                            AWidget.ToastLength.Short).Show();
+                    });
                     break;
                 case (Resource.Id.action_add_fav_place):
-                    ShowAddToFavAlert(() => AWidget.Toast.MakeText(this, "save to fav places", AWidget.ToastLength.Short).Show());
+                    ShowAddToFavAlert((name) =>
+                    {
+                        string key = ApplicationContext.GetString(Resource.String.fav_places_storage_key);
+                        var storage = new FavoritesStorage<FavoritePlace>(ApplicationContext, key);
+                        storage.AddItem(new FavoritePlace()
+                        { Id = storage.GetUniqueId(), Name = name, Place = nearestPlace });
+
+                        AWidget.Toast.MakeText(this, GetString(Resource.String.saved),
+                            AWidget.ToastLength.Short).Show();
+                    });
                     break;
             }
         }
 
-        private void ShowAddToFavAlert(Action saveAction)
+        private void ShowAddToFavAlert(Action<string> saveAction)
         {
             LayoutInflater layoutInflater = LayoutInflater.From(this);
             View view = layoutInflater.Inflate(Resource.Layout.add_to_fav_alert, null);
@@ -259,30 +370,40 @@ namespace Nearest.Activities
             var alertDialogBuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
             alertDialogBuilder.SetView(view);
 
+            var edit = view.FindViewById<AWidget.EditText>(Resource.Id.add_to_fav_alert_edit_text);
+
             // setup a alert window
             alertDialogBuilder.SetCancelable(false);
-            alertDialogBuilder.SetPositiveButton(Resource.String.add_to_fav_alert_ok, (s, e) => 
+            alertDialogBuilder.SetPositiveButton(Resource.String.add_to_fav_alert_ok, (s, e) =>
             {
-                saveAction.Invoke();
+                if (!string.IsNullOrWhiteSpace(edit.Text))
+                    saveAction.Invoke(edit.Text);
             });
-            alertDialogBuilder.SetNegativeButton(Resource.String.add_to_fav_alert_dismiss, (s, e) => 
+            alertDialogBuilder.SetNegativeButton(Resource.String.add_to_fav_alert_dismiss, (s, e) =>
             {
                 ((Android.Support.V7.App.AlertDialog)s).Dismiss();
             });
-                    
-		    // create an alert dialog
-		    var alert = alertDialogBuilder.Create();
+
+            // create an alert dialog
+            var alert = alertDialogBuilder.Create();
             alert.Show();
-	    }
+        }
 
         private async void AutoComplete()
         {
+            OnPrepareOptionsMenu(actionBarMenu);
+            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(false);
+
             try
             {
                 MapFragment mapFragment = FragmentManager.FindFragmentByTag<MapFragment>("MAP_FRAGMENT");
 
-                List<Prediction> predictions = await PlacesService.GetSearchQueryPredictions(searchTextView.Text,
-                        new Location() { lat = mapFragment.MyLocation.Latitude, lng = mapFragment.MyLocation.Longitude });
+                // just dont autocomplete
+                if (mapFragment.MyLocation == null)
+                    return;
+
+                List<Prediction> predictions = await PlacesService.GetSearchQueryPredictions(
+                    searchTextView.Text, mapFragment.MyLocation);
 
                 AWidget.ArrayAdapter adapter = new AWidget.ArrayAdapter<string>(
                     this, Android.Resource.Layout.SimpleDropDownItem1Line, predictions.Select(x => x.description).ToArray());
@@ -298,26 +419,59 @@ namespace Nearest.Activities
             }
         }
 
-        private async void GetNearestAddress()
+        private async void ShowRouteToNearestAddress(string query)
         {
-            if (searchTextView.Text != string.Empty)
+            CheckInternetConnection();
+
+            if (!string.IsNullOrWhiteSpace(query))
             {
+                ProgressDialog pleaseWaitDialog = new ProgressDialog(this);
+                pleaseWaitDialog.SetMessage(GetString(Resource.String.please_wait));
+                pleaseWaitDialog.SetCancelable(false);
+                pleaseWaitDialog.Show();
+
                 try
                 {
                     MapFragment mapFragment = FragmentManager.FindFragmentByTag<MapFragment>("MAP_FRAGMENT");
 
-                    List<Place> places = await PlacesService.GetPlacesByQuery(searchTextView.Text, 
-                        new Location() { lat = mapFragment.MyLocation.Latitude, lng = mapFragment.MyLocation.Longitude });
+                    if (mapFragment.MyLocation == null)
+                    {
+                        AWidget.Toast.MakeText(this, GetString(Resource.String.my_location_unavaliable),
+                            AWidget.ToastLength.Short).Show();
+                        return;
+                    }
 
-                    mapFragment.MarkPlaces(places);
+                    List<Place> places = await PlacesService.GetPlacesByQuery(query, mapFragment.MyLocation);
 
-                    string key1 = ApplicationContext.GetString(Resource.String.fav_places_storage_key);
-                    var storage1 = new SharedPreference<FavoritePlace>(ApplicationContext, key1);
-                    storage1.AddItem(new FavoritePlace() { Id = storage1.GetItems().Count, Name = searchTextView.Text, Place = places[0] });
+                    if (places.Count == 0)
+                    {
+                        AWidget.Toast.MakeText(this, GetString(Resource.String.no_places_found),
+                            AWidget.ToastLength.Short).Show();
+                        return;
+                    }
 
-                    string key2 = ApplicationContext.GetString(Resource.String.fav_query_storage_key);
-                    var storage2 = new SharedPreference<FavoriteQuery>(ApplicationContext, key2);
-                    storage2.AddItem(new FavoriteQuery() { Id = storage2.GetItems().Count, Name = searchTextView.Text, Query = searchTextView.Text });
+                    nearestPlace = null;
+                    Route shortestRoute = null;
+                    foreach (var place in places)
+                    {
+                        var route = await DirectionsService.GetShortestRoute(
+                            mapFragment.MyLocation, place.geometry.location);
+
+                        if (shortestRoute == null)
+                        {
+                            nearestPlace = place;
+                            shortestRoute = route;
+                        }
+                        else if (route.legs[0].distance.value < shortestRoute.legs[0].distance.value)
+                        {
+                            nearestPlace = place;
+                            shortestRoute = route;
+                        }
+                    }
+
+                    mapFragment.DrawRouteToPlace(shortestRoute, nearestPlace);
+                    OnPrepareOptionsMenu(actionBarMenu);
+                    actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(true);
                 }
                 catch (ApiCallException)
                 {
@@ -325,12 +479,48 @@ namespace Nearest.Activities
                 catch (NearbyPlacesSearchException)
                 {
                 }
+                catch (DirectionsException)
+                {
+                }
+                finally
+                {
+                    pleaseWaitDialog.Cancel();
+                }
+            }
+        }
+
+        private async void ShowRouteToPlace(Place place)
+        {
+            ProgressDialog pleaseWaitDialog = new ProgressDialog(this);
+            pleaseWaitDialog.SetMessage(GetString(Resource.String.please_wait));
+            pleaseWaitDialog.SetCancelable(false);
+            pleaseWaitDialog.Show();
+
+            try
+            {
+                MapFragment mapFragment = FragmentManager.FindFragmentByTag<MapFragment>("MAP_FRAGMENT");
+
+                nearestPlace = place;
+                Route route = await DirectionsService.GetShortestRoute(
+                    mapFragment.MyLocation, place.geometry.location);
+
+                mapFragment.DrawRouteToPlace(route, nearestPlace);
+            }
+            catch (ApiCallException)
+            {
+            }
+            catch (DirectionsException)
+            {
+            }
+            finally
+            {
+                pleaseWaitDialog.Cancel();
             }
         }
 
         private void StartSearch()
         {
-            IsInSearchMode = true;
+            isInSearchMode = true;
             searchTextView.RequestFocus();
             InputMethodManager inputManager = (InputMethodManager)GetSystemService(InputMethodService);
             inputManager.ToggleSoftInput(0, HideSoftInputFlags.NotAlways);
@@ -338,7 +528,7 @@ namespace Nearest.Activities
 
         private void FinishSearch()
         {
-            IsInSearchMode = false;
+            isInSearchMode = false;
             searchTextView.DismissDropDown();
             InputMethodManager inputManager = (InputMethodManager)GetSystemService(InputMethodService);
             inputManager.HideSoftInputFromWindow(searchTextView.WindowToken, HideSoftInputFlags.NotAlways);
@@ -350,7 +540,7 @@ namespace Nearest.Activities
 
             int actionBarTitleId = Resource.String.app_name;
             bool searchEnabled = true;
-             
+
             if (FragmentManager.BackStackEntryCount == 1)
             {
                 navigationView.SetCheckedItem(Resource.Id.nav_map);
@@ -363,32 +553,29 @@ namespace Nearest.Activities
                     case nameof(FavoriteQueriesFragment):
                         actionBarTitleId = Resource.String.favorite_fragment_name;
                         searchEnabled = false;
-                        IsActionAddToFavEnabled = false;
                         break;
                     case nameof(FavoritePlacesFragment):
                         actionBarTitleId = Resource.String.favorite_fragment_name;
                         searchEnabled = false;
-                        IsActionAddToFavEnabled = false;
                         break;
                     case nameof(SettingsFragment):
                         actionBarTitleId = Resource.String.settings_fragment_name;
                         searchEnabled = false;
-                        IsActionAddToFavEnabled = false;
                         break;
                 }
             }
 
             SupportActionBar.SetTitle(actionBarTitleId);
-            
+
             OnPrepareOptionsMenu(actionBarMenu);
-            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(IsActionAddToFavEnabled);
+            actionBarMenu.FindItem(Resource.Id.action_add_to_fav).SetVisible(false);
             actionBarMenu.FindItem(Resource.Id.action_search).SetVisible(searchEnabled);
 
             if (searchEnabled)
             {
-                actionBarMenu.FindItem(Resource.Id.action_search).SetVisible(!IsInSearchMode);
-                actionBarMenu.FindItem(Resource.Id.action_clear).SetVisible(IsInSearchMode);
-                actionBarMenu.FindItem(Resource.Id.action_voice).SetVisible(IsInSearchMode);
+                actionBarMenu.FindItem(Resource.Id.action_search).SetVisible(!isInSearchMode);
+                actionBarMenu.FindItem(Resource.Id.action_clear).SetVisible(isInSearchMode);
+                actionBarMenu.FindItem(Resource.Id.action_voice).SetVisible(isInSearchMode);
             }
         }
 

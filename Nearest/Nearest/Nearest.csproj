@@ -15,8 +15,8 @@
     <AndroidApplication>true</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
+    <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -102,7 +102,13 @@
     <Compile Include="CustomRecyclerView\ViewHolder.cs" />
     <Compile Include="Fragments\FavoritePlacesFragment.cs" />
     <Compile Include="Fragments\FavoriteQueriesFragment.cs" />
+    <Compile Include="GoogleApi\BaseService.cs" />
+    <Compile Include="GoogleApi\DirectionsService.cs" />
+    <Compile Include="GoogleApi\Helpers\RouteHelper.cs" />
+    <Compile Include="GoogleApi\Helpers\Utils.cs" />
+    <Compile Include="GoogleApi\Models\Common.cs" />
     <Compile Include="GoogleApi\Models\Exceptions.cs" />
+    <Compile Include="GoogleApi\Models\DirectionsResponse.cs" />
     <Compile Include="GoogleApi\PlacesService.cs" />
     <Compile Include="GoogleApi\Models\NearbyPlacesSearchResponse.cs" />
     <Compile Include="GoogleApi\Models\QueryAutoCompleteResponse.cs" />
@@ -110,6 +116,7 @@
     <Compile Include="Fragments\MapFragment.cs" />
     <Compile Include="CustomRecyclerView\Adapter.cs" />
     <Compile Include="CustomRecyclerView\ItemTouchCallback.cs" />
+    <Compile Include="Helpers\Utils.cs" />
     <Compile Include="Models\FavoritePlace.cs" />
     <Compile Include="Models\FavoriteQuery.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -118,21 +125,22 @@
     <AndroidResource Include="Resources\values\Colors.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <Compile Include="Storage\SharedPreference.cs" />
+    <Compile Include="Storage\FavoritesStorage.cs" />
+    <Compile Include="Storage\Storable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\app_bar.axml">
+    <AndroidResource Include="Resources\layout\action_bar.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\nav_header.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\map.axml">
+    <AndroidResource Include="Resources\layout\map_fragment.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\main.axml">
+    <AndroidResource Include="Resources\layout\main_activity.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -149,10 +157,10 @@
     <AndroidResource Include="Resources\layout\add_to_fav_alert.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\settings.axml">
+    <AndroidResource Include="Resources\layout\settings_fragment.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\favorites.axml">
+    <AndroidResource Include="Resources\layout\favorites_fragment.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\search_text_view.axml">
@@ -315,7 +323,9 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_map.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\Secrets.xml" />
+    <AndroidResource Include="Resources\values\Secrets.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\ic_action_close.png" />
@@ -363,7 +373,7 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_search.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\row_view.axml" />
+    <AndroidResource Include="Resources\layout\custom_row_view.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Dimens.xml" />
@@ -382,6 +392,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\Arrays.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

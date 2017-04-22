@@ -7,4 +7,6 @@
   <!-- item view colors -->
   <item name="item_view_normal" type="color">#FFFFFF</item>
   <item name="item_view_removed" type="color">#C62828</item>
+  <!-- map -->
+  <item name="route_polyline" type="color">#F44336</item>
 </resources>

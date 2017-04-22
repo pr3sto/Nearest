@@ -13,7 +13,7 @@
             android:layout_width="@dimen/nav_header_text_size"
             android:layout_height="@dimen/nav_header_text_size"
             android:layout_marginLeft="@dimen/standart_padding"
-            android:tint="?attr/colorPrimary" 
+            android:tint="?attr/colorPrimary"
             android:src="@drawable/ic_action_location_on" />
         <TextView
             android:layout_width="wrap_content"

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <!-- vechicle mode -->
+  <string-array name="vechicle_mode_names">
+    <item>@string/vechicle_mode_car</item>
+    <item>@string/vechicle_mode_walk</item>
+    <item>@string/vechicle_mode_bicycle</item>
+    <item>@string/vechicle_mode_transit</item>
+  </string-array>
+  <string-array name="vechicle_mode_values">
+    <item>driving</item>
+    <item>walking</item>
+    <item>bicycling</item>
+    <item>transit</item>
+  </string-array>
+  <string name="default_vechicle_mode">walking</string>
+
+  <!-- unit system -->
+  <string-array name="unit_system_names">
+    <item>@string/unit_system_metric</item>
+    <item>@string/unit_system_imperial</item>
+  </string-array>
+  <string-array name="unit_system_values">
+    <item>metric</item>
+    <item>imperial</item>
+  </string-array>
+  <string name="default_unit_system">metric</string>
+</resources>

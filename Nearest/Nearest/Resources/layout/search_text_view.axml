@@ -11,6 +11,5 @@
     android:inputType="text"
     android:singleLine="true"
     android:dropDownWidth="match_parent"
-    android:dropDownHorizontalOffset="-1000dp"
-    android:dropDownVerticalOffset="@dimen/autocomplete_dropdown_offset"
+    android:dropDownAnchor="@+id/action_bar"
     android:theme="@style/AutoCompleteTextViewTheme" />

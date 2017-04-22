@@ -12,7 +12,7 @@ namespace Nearest.Models
         {
             get
             {
-                return Place.name + "(" + Place.geometry.location.lat + ", " + Place.geometry.location.lng + ")";
+                return Place.name + " (" + Place.geometry.location.lat + ", " + Place.geometry.location.lng + ")";
             }
             private set { }
         }
