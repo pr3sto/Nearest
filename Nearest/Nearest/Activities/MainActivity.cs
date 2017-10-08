@@ -20,10 +20,13 @@ using Nearest.Helpers;
 using Android.Speech;
 using Android.Content;
 using Android.Preferences;
+using Android.Content.Res;
+using Android.Content.PM;
 
 namespace Nearest.Activities
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher")]
+    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher",
+        ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize)]
     public class MainActivity : AppCompatActivity
     {
         #region Listeners
@@ -131,6 +134,12 @@ namespace Nearest.Activities
             }
 
             CheckInternetConnection();
+        }
+
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+            UpdateActionBar();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
