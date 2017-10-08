@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AutoCompleteTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.AppCompatAutoCompleteTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_text_view"
     android:hint="@string/search_text_view_hint"
