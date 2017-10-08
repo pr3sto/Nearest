@@ -3,6 +3,7 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 
 namespace Nearest.CustomRecyclerView
@@ -11,6 +12,7 @@ namespace Nearest.CustomRecyclerView
     {
         private Context context;
         private Drawable background;
+        private Drawable divider;
         private bool initiated;
 
         public ItemDecoration(Context context)
@@ -21,6 +23,7 @@ namespace Nearest.CustomRecyclerView
         private void Init()
         {
             background = new ColorDrawable(new Color(ContextCompat.GetColor(context, Resource.Color.item_view_removed)));
+            divider = ContextCompat.GetDrawable(context, Resource.Drawable.line_divider);
             initiated = true;
         }
 
@@ -85,7 +88,29 @@ namespace Nearest.CustomRecyclerView
                 background.Draw(canvas);
             }
 
+            int dividerLeft = parent.PaddingLeft;
+            int dividerRight = parent.Width - parent.PaddingRight;
+
+            int childCount1 = parent.ChildCount;
+            for (int i = 0; i < childCount1; i++)
+            {
+                View child = parent.GetChildAt(i);
+
+                RecyclerView.LayoutParams lParams = (RecyclerView.LayoutParams)child.LayoutParameters;
+
+                int dividerTop = child.Bottom + lParams.BottomMargin;
+                int dividerBottom = dividerTop + divider.IntrinsicHeight;
+
+                divider.SetBounds(dividerLeft, dividerTop, dividerRight, dividerBottom);
+                divider.Draw(canvas);
+            }
+
             base.OnDraw(canvas, parent, state);
+        }
+
+        public override void GetItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state)
+        {
+            outRect.Bottom = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 1, context.Resources.DisplayMetrics);
         }
     }
 }
